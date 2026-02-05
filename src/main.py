@@ -155,12 +155,12 @@ class BeaconApp:
             articles = self.scraper.scrape_news_site(
                 url=source["url"],
                 selectors=source["selectors"],
-                max_articles=5,
+                max_articles=50,
             )
 
             logger.info(f"✅ Successfully scraped {len(articles)} articles")
-            for i, article in enumerate(articles[:3], 1):
-                logger.info(f"  {i}. {article['title'][:60]}...")
+            for i, article in enumerate(articles, 1):
+                logger.info(f"  {i}. {article['title']}")
 
             return True
 
