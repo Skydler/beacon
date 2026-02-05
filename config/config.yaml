@@ -1,0 +1,37 @@
+news_sources:
+  - name: "Info Quilmes"
+    url: "https://www.infoquilmes.com.ar/"
+    selectors:
+      # Links to articles (relative URLs starting with "noticias/")
+      article_list: "a[href^='noticias/']"
+      # Title can be in H4, H5, H6, or div.titulo
+      title: "H4 a, H5 a, H6 a, div.titulo a"
+      # Category tag
+      category: "span.volanta"
+      # Optional excerpt/description
+      description: "span.copete"
+
+ollama:
+  # Ollama is assumed to be running externally (host system)
+  base_url: "http://localhost:11434"
+  model: "llama3.2:1b"
+  timeout: 60
+
+discord:
+  webhook_url: "${DISCORD_WEBHOOK_URL}"  # Load from environment
+
+database:
+  path: "./data/seen_articles.db"
+
+scraping:
+  check_interval: 7200  # seconds (2 hours)
+  max_articles_per_run: 20
+  user_agent: "Mozilla/5.0 (compatible; BeaconBot/1.0)"
+
+filtering:
+  preferences_file: "./preferences.md"
+  min_relevance_score: 7  # 1-10 scale
+
+logging:
+  level: "INFO"
+  # Logs are sent to stdout (captured by Docker/systemd)

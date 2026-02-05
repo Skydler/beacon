@@ -5,57 +5,92 @@
 ### Hardware
 - **Platform**: Raspberry Pi 5 (ARM64) or compatible Linux system
 - **RAM**: 4GB minimum, 8GB recommended
-- **Storage**: 10GB free space (for Ollama model, Python env, and database)
+- **Storage**: 15GB free space (for Docker images, Ollama model, and database)
 - **Network**: Stable internet connection for scraping and Discord
 
 ### Operating System
 - Raspberry Pi OS (Debian-based) or Ubuntu 22.04+ ARM64
+- **Docker**: Version 20.10+ with docker-compose v2
 
 ## Software Dependencies
 
 ### Core Dependencies
 
-#### Python 3.10+
+#### Docker and Docker Compose
+Install Docker on Raspberry Pi:
 ```bash
+# Install Docker
+curl -fsSL https://get.docker.com | sh
+
+# Add user to docker group
+sudo usermod -aG docker $USER
+
+# Install docker-compose (if not included)
 sudo apt update
-sudo apt install python3 python3-pip python3-venv
+sudo apt install docker-compose-plugin
+
+# Verify installation
+docker --version
+docker compose version
 ```
 
-#### Ollama
-Install on Raspberry Pi:
+#### uv (Python Package Manager)
+Install uv for local development (optional, not needed for Docker deployment):
 ```bash
-curl -fsSL https://ollama.com/install.sh | sh
+curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
-Pull the model:
+### Project Dependencies (pyproject.toml)
+
+Create `pyproject.toml` in project root:
+```toml
+[project]
+name = "beacon"
+version = "0.1.0"
+description = "AI-powered news aggregator for personalized local news"
+requires-python = ">=3.14"
+dependencies = [
+    "requests>=2.31.0",
+    "beautifulsoup4>=4.12.0",
+    "lxml>=4.9.0",
+    "ollama>=0.1.0",
+    "pyyaml>=6.0",
+    "sqlalchemy>=2.0.0",
+    "discord-webhook>=1.3.0",
+    "python-dotenv>=1.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-cov>=4.1.0",
+    "ruff>=0.1.0",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py314"
+select = ["E", "F", "I", "N", "W"]
+ignore = []
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+python_classes = "Test*"
+python_functions = "test_*"
+```
+
+Local development installation (optional):
 ```bash
-# Option 1: Lightweight (recommended for Pi 5 with 4GB RAM)
-ollama pull llama3.2:1b
+# Create virtual environment and install dependencies
+uv sync
 
-# Option 2: Better accuracy (requires 8GB RAM)
-ollama pull llama3.2:3b
-```
-
-### Python Packages
-
-Create `requirements.txt`:
-```
-requests>=2.31.0
-beautifulsoup4>=4.12.0
-lxml>=4.9.0
-ollama>=0.1.0
-pyyaml>=6.0
-sqlalchemy>=2.0.0
-discord-webhook>=1.3.0
-schedule>=1.2.0
-python-dotenv>=1.0.0
-```
-
-Install:
-```bash
-python3 -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
+# Install with dev dependencies
+uv sync --all-extras
 ```
 
 ## Python Library Purposes
@@ -66,8 +101,70 @@ pip install -r requirements.txt
 - **pyyaml**: Configuration file parsing
 - **sqlalchemy**: Database ORM for article tracking
 - **discord-webhook**: Discord webhook integration
-- **schedule**: Task scheduling within Python
 - **python-dotenv**: Environment variable management
+
+## Development Tools
+
+- **uv**: Fast Python package installer and resolver, manages virtual environments and Python versions
+- **ruff**: Fast Python linter and formatter (replaces flake8, black, isort, and more)
+- **pytest**: Testing framework with excellent plugin ecosystem
+- **Docker**: Container runtime for isolated, reproducible deployments
+- **docker-compose**: Multi-container orchestration
+
+## Docker Configuration
+
+### Dockerfile
+Create `Dockerfile` in project root:
+```dockerfile
+FROM python:3.14-slim
+
+# Install uv
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
+
+# Set working directory
+WORKDIR /app
+
+# Copy project files
+COPY pyproject.toml ./
+COPY src/ ./src/
+COPY config/ ./config/
+COPY preferences.md ./
+
+# Install dependencies
+RUN uv sync --no-dev
+
+# Create data directory
+RUN mkdir -p /app/data
+
+# Run the application (logs to stdout)
+CMD ["uv", "run", "python", "src/main.py"]
+```
+
+### docker-compose.yml
+Create `docker-compose.yml` in project root:
+```yaml
+version: '3.8'
+
+services:
+  beacon:
+    build: .
+    container_name: beacon-aggregator
+    environment:
+      - DISCORD_WEBHOOK_URL=${DISCORD_WEBHOOK_URL}
+      - OLLAMA_BASE_URL=${OLLAMA_BASE_URL:-http://host.docker.internal:11434}
+    volumes:
+      - ./data:/app/data
+      - ./config/config.yaml:/app/config/config.yaml:ro
+      - ./preferences.md:/app/preferences.md:ro
+    restart: "no"  # Use systemd timer for scheduling
+    # Use host network to access Ollama on host
+    network_mode: host
+    # Alternative: use extra_hosts if not using host network
+    # extra_hosts:
+    #   - "host.docker.internal:host-gateway"
+```
+
+**Note**: Ollama is assumed to be running on the host system or accessible via network. The container uses `host.docker.internal` to connect to services on the host, or you can set a custom `OLLAMA_BASE_URL` environment variable.
 
 ## External Services
 
@@ -90,7 +187,10 @@ news_sources:
       description: "p.excerpt"
 
 ollama:
-  base_url: "http://localhost:11434"
+  # Ollama is assumed to be running externally (host system or remote server)
+  base_url: "http://localhost:11434"  # Localhost when using host network in Docker
+  # base_url: "http://host.docker.internal:11434"  # Alternative for bridge network
+  # base_url: "${OLLAMA_BASE_URL}"  # Load from environment variable
   model: "llama3.2:1b"
   timeout: 60
 
@@ -108,29 +208,36 @@ scraping:
 filtering:
   preferences_file: "./preferences.md"
   min_relevance_score: 7  # 1-10 scale
+
+logging:
+  level: "INFO"
+  # Logs are sent to stdout (captured by Docker/systemd)
 ```
 
 ### Environment Variables (.env)
 ```bash
 DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/YOUR_WEBHOOK_URL
+OLLAMA_BASE_URL=http://localhost:11434  # Optional: Override Ollama URL
 ```
 
 ## Scheduling
 
-### Option 1: Systemd Timer (Recommended)
+### Option 1: Systemd Timer with Docker (Recommended)
 
 Create `/etc/systemd/system/beacon.service`:
 ```ini
 [Unit]
-Description=Beacon News Aggregator
-After=network.target
+Description=Beacon News Aggregator (Docker)
+After=docker.service
+Requires=docker.service
 
 [Service]
 Type=oneshot
 User=leonel
 WorkingDirectory=/home/leonel/projects/beacon
-ExecStart=/home/leonel/projects/beacon/venv/bin/python /home/leonel/projects/beacon/src/main.py
-Environment=PATH=/home/leonel/projects/beacon/venv/bin:/usr/local/bin:/usr/bin
+ExecStart=/usr/bin/docker compose run --rm beacon
+StandardOutput=append:/home/leonel/projects/beacon/logs/beacon.log
+StandardError=append:/home/leonel/projects/beacon/logs/beacon.log
 ```
 
 Create `/etc/systemd/system/beacon.timer`:
@@ -154,11 +261,19 @@ sudo systemctl enable beacon.timer
 sudo systemctl start beacon.timer
 ```
 
-### Option 2: Cron
+### Option 2: Cron with Docker
 ```bash
 crontab -e
 # Add: Run every 2 hours
-0 */2 * * * cd /home/leonel/projects/beacon && /home/leonel/projects/beacon/venv/bin/python src/main.py >> logs/beacon.log 2>&1
+0 */2 * * * cd /home/leonel/projects/beacon && /usr/bin/docker compose run --rm beacon >> logs/beacon.log 2>&1
+```
+
+### Option 3: Host Cron with uv (without Docker)
+For local development without containers:
+```bash
+crontab -e
+# Add: Run every 2 hours
+0 */2 * * * cd /home/leonel/projects/beacon && /home/leonel/.local/bin/uv run python src/main.py >> logs/beacon.log 2>&1
 ```
 
 ## Database Schema
@@ -182,16 +297,28 @@ CREATE TABLE seen_articles (
 - Limit concurrent article processing to avoid memory issues
 - Consider batch processing for multiple articles
 - Use connection pooling for Ollama API
+- Docker adds ~50-100MB overhead per container
 
 ### Expected Resource Usage
-- **Memory**: 1.5-2GB with llama3.2:1b running
+- **Memory**:
+  - Ollama container: 1.5-2GB with llama3.2:1b loaded
+  - Beacon container: ~100-200MB during execution
+  - Total: ~2GB peak usage
 - **CPU**: Spikes during LLM inference, idle between runs
 - **Network**: Minimal (article scraping + webhook POST)
+- **Storage**:
+  - Docker images: ~2GB
+  - Ollama model: ~1.3GB (1b) or ~2GB (3b)
+  - Database: grows slowly (~1MB per 1000 articles)
 
-## Testing Ollama Installation
+## Testing Installation
 
+### Test Ollama Container
 ```bash
-# Test Ollama is running
+# Check if Ollama is running
+docker compose ps
+
+# Test Ollama API
 curl http://localhost:11434/api/generate -d '{
   "model": "llama3.2:1b",
   "prompt": "Test: Is this relevant to technology news? Article: New smartphone released with advanced AI features.",
@@ -199,10 +326,57 @@ curl http://localhost:11434/api/generate -d '{
 }'
 ```
 
+### Test Beacon Container
+```bash
+# Manual test run
+docker compose run --rm beacon
+
+# Check logs
+docker compose logs beacon
+docker compose logs ollama
+```
+
 ## Security Considerations
 
 - Keep Discord webhook URL in `.env` file (never commit to git)
 - Add `.env` to `.gitignore`
-- Run scraper with minimal user privileges
+- Use Docker's user namespace remapping for additional isolation
+- Don't run containers as root in production
 - Validate and sanitize all scraped content before processing
 - Rate-limit scraping to be respectful to news websites
+- Regularly update Docker images for security patches
+
+### Recommended .gitignore
+```
+# Environment variables
+.env
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Ruff
+.ruff_cache/
+
+# uv
+uv.lock
+
+# Data
+data/
+*.db
+*.db-journal
+
+# IDE
+.vscode/
+.idea/
+*.swp
+```
