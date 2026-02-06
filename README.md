@@ -5,29 +5,32 @@ Scrapes local news websites, filters articles using a local LLM (Ollama), and de
 ## Features
 
 - **Automated scraping** from configurable news sources
-- **LLM-based filtering** using Ollama (analyzes full article content)
+- **LLM-based filtering** using GitHub Models API (analyzes full article content)
 - **Personalized relevance** based on your interests (preferences.md)
 - **Discord notifications** for relevant articles only
 - **Duplicate prevention** via SQLite database
-- **Raspberry Pi 5 optimized** (lightweight, runs in Docker)
+- **Raspberry Pi 5 optimized** (no local LLM required!)
 
 ## Quick Start
 
 ### Prerequisites
 - Raspberry Pi 5 or Linux system
-- Docker and Docker Compose
-- Ollama installed with llama3.2:1b model
+- GitHub account (free)
 - Discord webhook URL
 
 ### Setup
 
 ```bash
-# 1. Install Ollama and pull model
-curl -fsSL https://ollama.com/install.sh | sh
-ollama pull llama3.2:3b  # Recommended: Better reasoning than 1b
+# 1. Create GitHub Personal Access Token
+# Visit: https://github.com/settings/personal-access-tokens/new?name=GitHub+Models+token&user_models=read
+# Select "Fine-grained tokens" → Resource owner: your account → Permissions: Models (Read)
+# Copy the generated token
 
 # 2. Create environment file
-echo "DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/YOUR_ID/YOUR_TOKEN" > .env
+cat > .env << EOF
+DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/YOUR_ID/YOUR_TOKEN
+GITHUB_MODELS_TOKEN=github_pat_YOUR_TOKEN_HERE
+EOF
 
 # 3. Customize preferences
 # Edit preferences.md with your interests
@@ -35,14 +38,13 @@ echo "DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/YOUR_ID/YOUR_TOKEN" >
 # 4. Configure news sources
 # Edit config/config.yaml with your local news site(s)
 
-# 5. Build and test
-docker compose build
-docker compose run --rm beacon
+# 5. Install dependencies
+curl -LsSf https://astral.sh/uv/install.sh | sh
+uv sync
 
-# 6. Setup scheduled execution (every 2 hours)
-sudo cp systemd/beacon.* /etc/systemd/system/
-sudo systemctl daemon-reload
-sudo systemctl enable --now beacon.timer
+# 6. Test the setup
+uv run python src/main.py --test-llm
+uv run python src/main.py --dry-run
 ```
 
 ## Configuration
@@ -52,8 +54,9 @@ Define your interests, topics to follow, and keywords. The LLM uses this to scor
 
 ### config/config.yaml
 ```yaml
-ollama:
-  model: "llama3.2:3b"  # Upgrade from 1b for better accuracy
+github_models:
+  model: "gpt-4o-mini"  # Recommended: best balance
+  # Alternatives: "Meta-Llama-3.1-8B-Instruct", "Mistral-Nemo"
 
 filtering:
   min_relevance_score: 8  # Only send articles scored 8+/10
@@ -133,38 +136,43 @@ docker compose run --rm beacon
 ### Too many false positives?
 - Increase `min_relevance_score` in config.yaml (e.g., 7 → 8)
 - Refine preferences.md with more specific interests
-- Upgrade to llama3.2:3b for better reasoning
+- GitHub Models already uses GPT-4o-mini which has excellent reasoning
 
 ### Missing relevant articles?
 - Lower `min_relevance_score` in config.yaml (e.g., 8 → 7)
 - Add more keywords to preferences.md
-- Check LLM reasoning in logs: `journalctl -u beacon.service | grep "scored"`
+- Check LLM reasoning in logs
 
-### Too slow?
-- Use llama3.2:1b (faster, less accurate)
-- Reduce `max_articles_per_run` in config.yaml
+### Rate Limits?
+- Free tier: 150 requests/day for low-tier models (10 req/min)
+- If you hit limits, reduce `max_articles_per_run` in config.yaml
+- Or space out runs more (every 4 hours instead of 2)
 
 ## Model Recommendations
 
-| Model | RAM | Speed | Accuracy | Use Case |
-|-------|-----|-------|----------|----------|
-| llama3.2:1b | ~2GB | Fast | Basic | Quick testing |
-| llama3.2:3b | ~4GB | Medium | Good | **Recommended** |
-| qwen2.5:3b | ~4GB | Medium | Good | Alternative |
-| phi3:mini | ~3GB | Medium | Better | If 3b too slow |
+GitHub Models provides free API access to powerful models:
+
+| Model | Speed | Accuracy | Use Case |
+|-------|-------|----------|----------|
+| gpt-4o-mini | Fast | Excellent | **Recommended** - Best reasoning |
+| Meta-Llama-3.1-8B-Instruct | Fast | Good | Open source option |
+| Mistral-Nemo | Fast | Good | Alternative option |
+| gpt-4o | Slower | Best | For complex analysis |
 
 ```bash
-# Switch models
-ollama pull llama3.2:3b
-# Update config.yaml: model: "llama3.2:3b"
-docker compose run --rm beacon  # Test
+# Switch models - Edit config/config.yaml:
+# model: "gpt-4o-mini"
 ```
+
+**No local installation required!** All models run in the cloud via GitHub's API.
+
+**Available models**: Run `uv run python -c "import requests, os; r=requests.get('https://models.inference.ai.azure.com/models', headers={'Authorization': f'Bearer {os.getenv(\"GITHUB_MODELS_TOKEN\")}'}).json(); print('\n'.join([m['name'] for m in r if m['task']=='chat-completion']))"` to see all available chat models.
 
 ## Technology Stack
 
 - **Python 3.14** + uv (package manager)
-- **Ollama** (local LLM inference)
-- **Docker** (containerization)
+- **GitHub Models API** (cloud LLM inference - no local GPU needed!)
+- **OpenAI SDK** (API client)
 - **SQLite** (article tracking)
 - **BeautifulSoup** (HTML parsing)
 - **pytest + ruff** (testing + linting)

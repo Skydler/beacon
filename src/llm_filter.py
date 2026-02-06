@@ -1,35 +1,41 @@
-"""LLM-based article filtering using Ollama."""
+"""LLM-based article filtering using GitHub Models API."""
 
 import json
 import logging
 from pathlib import Path
 from typing import Dict, Optional, Tuple
 
-import ollama
+from openai import OpenAI
 
 logger = logging.getLogger(__name__)
 
 
 class LLMFilter:
-    """Filter articles using a local LLM (Ollama)."""
+    """Filter articles using GitHub Models API (OpenAI-compatible)."""
 
     def __init__(
         self,
-        base_url: str = "http://localhost:11434",
-        model: str = "llama3.2:1b",
+        api_token: str,
+        model: str,
         timeout: int = 60,
     ):
         """Initialize the LLM filter.
 
         Args:
-            base_url: Ollama API base URL
-            model: Model name to use for filtering
+            api_token: GitHub Personal Access Token with models:read permission
+            model: Model name to use (e.g., "openai/gpt-4o-mini")
             timeout: Request timeout in seconds
         """
-        self.base_url = base_url
         self.model = model
         self.timeout = timeout
         self.preferences = ""
+
+        # Initialize OpenAI client pointed at GitHub Models endpoint
+        # Note: OpenAI client will append /chat/completions automatically
+        self.client = OpenAI(
+            base_url="https://models.inference.ai.azure.com",
+            api_key=api_token,
+        )
 
     def load_preferences(self, preferences_file: str) -> None:
         """Load user preferences from markdown file.
@@ -71,16 +77,23 @@ class LLMFilter:
         try:
             logger.debug(f"Analyzing article: {article.get('title', 'Unknown')[:50]}...")
 
-            # Call Ollama API with JSON mode for structured output
-            response = ollama.generate(
+            # Call GitHub Models API using OpenAI client
+            response = self.client.chat.completions.create(
                 model=self.model,
-                prompt=prompt,
-                format="json",  # Enable JSON mode
-                options={"temperature": 0.3},  # Consistent scoring
+                messages=[
+                    {
+                        "role": "system",
+                        "content": "You are a strict news filter that outputs JSON responses.",
+                    },
+                    {"role": "user", "content": prompt},
+                ],
+                response_format={"type": "json_object"},
+                temperature=0.3,  # Consistent scoring
+                timeout=self.timeout,
             )
 
             # Parse JSON response
-            score, reason = self._parse_json_response(response["response"])
+            score, reason = self._parse_json_response(response.choices[0].message.content)
 
             logger.info(f"Article scored {score}/10: {article.get('title', 'Unknown')[:50]}...")
             return score, reason
@@ -109,8 +122,7 @@ class LLMFilter:
         if len(content) > max_content_length:
             content = content[:max_content_length] + "..."
 
-        prompt = (
-            f"""You are a strict news filter. Analyze if this article matches the user's interests.
+        prompt = f"""You are a news filter. Analyze if this article matches the user's interests.
 
 USER INTERESTS:
 {preferences}
@@ -121,17 +133,17 @@ Category: {category}
 Content: {content}
 
 CRITICAL RULES:
-1. The article MUST be directly about one of the user's topics - do NOT make loose connections
-2. When in doubt, score LOW - false negatives are better than false positives
-3. Generic local news is NOT relevant unless it matches a specific topic
-4. Check if the article matches the "Topics to Ignore" section - if so, score 1-2
-5. Technology topics must be ACTUALLY about technology, not just any local achievement
+1. Check if the article directly matches ANY of the user's HIGH or MEDIUM priority topics
+2. Restaurant openings, food festivals, and culinary events ARE relevant (Food & Culinary section)
+3. Technology, health alerts, price changes, and weather emergencies are also relevant
+4. Check if the article is in the "Topics to Ignore" list - if so, score 1-2
+5. When in doubt about relevance, score conservatively but fairly
 
 ANALYSIS PROCESS:
-1. First, check if the article is in the "Topics to Ignore" list
-2. Then, identify which specific topic (if any) this article addresses
-3. Verify the connection is DIRECT, not tangential
-4. Rate the relevance from 1-10 (prefer scores 1-5 unless truly relevant)
+1. First, check if the article matches a HIGH priority topic (score 8-10)
+2. Then check if it matches a MEDIUM priority topic (score 6-7)
+3. If it's in "Topics to Ignore", score 1-2
+4. Otherwise score based on relevance and local impact
 
 Respond with ONLY valid JSON in this exact format:
 {{
@@ -139,7 +151,6 @@ Respond with ONLY valid JSON in this exact format:
   "reason": "<brief explanation of which topic it matches, or why it doesn't match>"
 }}
 """
-        )
         return prompt
 
     def _parse_json_response(self, response: str) -> Tuple[int, str]:
@@ -183,16 +194,21 @@ Respond with ONLY valid JSON in this exact format:
             return 1, f"Invalid response format: {str(e)}"
 
     def test_connection(self) -> bool:
-        """Test connection to Ollama API.
+        """Test connection to GitHub Models API.
 
         Returns:
             True if connection successful, False otherwise
         """
         try:
-            # Try to list models
-            ollama.list()
-            logger.info(f"Successfully connected to Ollama at {self.base_url}")
+            # Try to make a simple test request
+            self.client.chat.completions.create(
+                model=self.model,
+                messages=[{"role": "user", "content": "Test"}],
+                max_tokens=5,
+                timeout=10,
+            )
+            logger.info(f"Successfully connected to GitHub Models API (model: {self.model})")
             return True
         except Exception as e:
-            logger.error(f"Failed to connect to Ollama: {e}")
+            logger.error(f"Failed to connect to GitHub Models API: {e}")
             return False

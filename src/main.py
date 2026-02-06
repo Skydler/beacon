@@ -37,11 +37,11 @@ class BeaconApp:
         # Initialize components
         self.db = Database(self.config.get_database_path())
 
-        ollama_config = self.config.get_ollama_config()
+        github_models_config = self.config.get_github_models_config()
         self.llm_filter = LLMFilter(
-            base_url=ollama_config.get("base_url", "http://localhost:11434"),
-            model=ollama_config.get("model", "llama3.2:1b"),
-            timeout=ollama_config.get("timeout", 60),
+            api_token=github_models_config["api_token"],
+            model=github_models_config["model"],
+            timeout=github_models_config["timeout"],
         )
 
         self.scraper = NewsScraper()
@@ -129,10 +129,14 @@ class BeaconApp:
             f"{sent_notifications} notifications"
         )
 
-        if not dry_run:
-            self.discord.send_summary(total_articles, new_articles, sent_notifications)
+        # Only send summary if there were notifications
+        if sent_notifications > 0:
+            if not dry_run:
+                self.discord.send_summary(total_articles, new_articles, sent_notifications)
+            else:
+                logger.info("[DRY RUN] Would send summary")
         else:
-            logger.info("[DRY RUN] Would send summary")
+            logger.info("No relevant articles found - skipping summary notification")
 
     def test_scraper(self) -> bool:
         """Test scraper with first news source.
@@ -178,10 +182,10 @@ class BeaconApp:
         try:
             # Test connection
             if not self.llm_filter.test_connection():
-                logger.error("❌ Failed to connect to Ollama")
+                logger.error("❌ Failed to connect to GitHub Models API")
                 return False
 
-            logger.info("✅ Connected to Ollama")
+            logger.info("✅ Connected to GitHub Models API")
 
             # Test analysis
             test_article = {

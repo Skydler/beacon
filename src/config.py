@@ -64,7 +64,7 @@ class Config:
 
     def _validate(self) -> None:
         """Validate required configuration fields."""
-        required_sections = ["news_sources", "ollama", "discord", "database", "filtering"]
+        required_sections = ["news_sources", "github_models", "discord", "database", "filtering"]
 
         for section in required_sections:
             if section not in self.config:
@@ -112,13 +112,13 @@ class Config:
         """
         return self.config.get("news_sources", [])
 
-    def get_ollama_config(self) -> Dict[str, Any]:
-        """Get Ollama configuration.
+    def get_github_models_config(self) -> Dict[str, Any]:
+        """Get GitHub Models configuration.
 
         Returns:
-            Ollama configuration dictionary
+            GitHub Models configuration dictionary
         """
-        return self.config.get("ollama", {})
+        return self.config.get("github_models", {})
 
     def get_discord_webhook(self) -> str:
         """Get Discord webhook URL.

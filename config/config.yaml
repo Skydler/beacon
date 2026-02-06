@@ -11,12 +11,11 @@ news_sources:
       # Optional excerpt/description
       description: "span.copete"
 
-ollama:
-  # Ollama base URL - can be overridden with OLLAMA_BASE_URL env var
-  # For docker-compose: http://ollama:11434
-  # For host system: http://localhost:11434
-  base_url: "${OLLAMA_BASE_URL}"
-  model: "llama3.2:1b"
+github_models:
+  # GitHub Models API - uses GitHub Personal Access Token
+  # Create token at: https://github.com/settings/personal-access-tokens/new?name=GitHub+Models+token&user_models=read
+  api_token: "${GITHUB_MODELS_TOKEN}"
+  model: "gpt-4o-mini"
   timeout: 60
 
 discord:
