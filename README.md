@@ -1,6 +1,6 @@
 # Beacon - AI-Powered News Aggregator
 
-Scrapes local news websites, filters articles using a local LLM (Ollama), and delivers personalized news to Discord.
+Scrapes local news websites, filters articles using a LLM, and delivers personalized news to Discord.
 
 ## Features
 
@@ -83,7 +83,7 @@ beacon/
 ├── src/
 │   ├── main.py              # Main orchestrator
 │   ├── scraper.py           # Web scraping
-│   ├── llm_filter.py        # Ollama LLM filtering
+│   ├── llm_filter.py        # LLM filtering
 │   ├── discord_notifier.py  # Discord webhook
 │   ├── database.py          # SQLite article tracking
 │   └── config.py            # Configuration loader
