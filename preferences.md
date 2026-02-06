@@ -30,6 +30,12 @@ These topics are extremely relevant - I want to be notified about any articles c
 - **Severe Weather Events**: Major storms, flooding, extreme heat waves, cold snaps
 - **Weather Emergencies**: Emergency declarations, evacuation orders, weather warnings
 
+### Food & Culinary
+- **Restaurant Openings**: New restaurants, bars, cafes, food venues opening in the area
+- **Food Events**: Food festivals, culinary fairs, gastronomic events, food markets
+- **Local Food Scene**: Notable chefs, new culinary concepts, food trends
+- **Food Safety**: Health inspections, food recalls, contamination alerts
+
 ## Medium Priority Topics
 
 I'm interested in these topics if they have significant local impact:
@@ -48,6 +54,11 @@ I'm interested in these topics if they have significant local impact:
 - **Public Services**: Transportation fare changes, utility rate changes
 - **Benefits & Assistance**: Social programs, subsidies, government assistance
 - **Consumer Rights**: Regulatory changes affecting consumers, recalls
+
+### Food & Dining (Medium Impact)
+- **Food Prices**: Changes in food costs, grocery prices, restaurant price trends
+- **Specialty Food Stores**: New specialty shops, delis, food markets opening
+- **Cooking Classes & Workshops**: Culinary education, food-related workshops
 
 ## Low Priority Topics
 
@@ -69,7 +80,6 @@ Do NOT notify me about articles primarily focused on:
 - **Crime reports** (unless cybercrime, major security breach, or public safety alert)
 - **Obituaries and funerals**
 - **Human interest stories** without practical relevance
-- **Restaurant/bar openings** (unless major chain or food security issue)
 - **Traffic accidents** (unless major highway closure)
 - **Stock market news** (I care about microeconomy, not Wall Street)
 - **Crypto prices and trading** (not interested in speculation)
@@ -108,6 +118,14 @@ Do NOT notify me about articles primarily focused on:
 - Flooding, evacuation, weather emergency
 - Temperature record, severe weather
 
+**Food & Dining:**
+- Restaurant opening, new restaurant, inauguration
+- Food festival, culinary fair, gastronomic event
+- Chef, cuisine, culinary, gastronomy
+- Food market, farmers market, food hall
+- Pizzeria, bakery, cafe, bistro, brewery
+- Food safety, health inspection, food recall
+
 ### Negative keywords (reduce score):
 - Casino, gambling, lottery
 - Horoscope, astrology
@@ -139,8 +157,8 @@ Do NOT notify me about articles primarily focused on:
 Use this scale when rating articles:
 
 - **10**: Urgent/critical (disease outbreak, severe weather warning, major security breach)
-- **8-9**: High-priority topic with direct local impact (price increases, tech events, health alerts)
-- **6-7**: Medium-priority topic with clear relevance (tech business, healthcare access, service changes)
+- **8-9**: High-priority topic with direct local impact (price increases, tech events, health alerts, restaurant openings, food festivals)
+- **6-7**: Medium-priority topic with clear relevance (tech business, healthcare access, service changes, specialty food stores)
 - **4-5**: Low-priority topic or weak local connection (minor weather, infrastructure updates)
 - **2-3**: Marginally relevant or contains negative keywords
 - **1**: Should be ignored based on ignore list
@@ -172,6 +190,12 @@ Use this scale when rating articles:
 - "Heat Wave Warning: Temperatures Expected to Reach 40°C" → **10** (Extreme weather)
 - "Storm Alert: Heavy Rainfall and Flooding Expected" → **10** (Weather emergency)
 
+**Food & Dining:**
+- "New Neapolitan Pizzeria Opens in City Center" → **9** (Restaurant opening)
+- "Annual Food Festival Returns This Weekend" → **9** (Food event)
+- "Health Department Closes Restaurant After Inspection" → **8** (Food safety)
+- "Local Chef Wins National Culinary Award" → **7** (Local food scene)
+
 ### ⚠️ BORDERLINE Articles (Score 4-6):
 
 - "New Coworking Space Opens Downtown" → **5** (Tech-adjacent, minor impact)
@@ -194,8 +218,8 @@ Use this scale when rating articles:
 **Explicitly Ignored:**
 - "Local Team Wins Soccer Championship" → **1** (Sports)
 - "Traffic Accident Closes Highway Lane" → **1** (Traffic accident)
-- "New Restaurant Opens in Shopping Center" → **1** (Food venue)
 - "Mayor Announces Park Renovation" → **1** (Not relevant unless health/weather related)
+- "Celebrity Spotted at Local Bar" → **1** (Entertainment/gossip)
 
 ## Critical Filtering Instructions
 
@@ -211,5 +235,6 @@ Use this scale when rating articles:
 **Microeconomy MUST affect household budgets** - Not stock markets or big business profits
 **Health MUST be actionable** - Outbreaks, alerts, access issues (not general medical science)
 **Weather MUST be extreme or emergency** - Not routine forecasts
+**Food & Dining MUST be about venues, events, or safety** - Restaurant openings, food festivals, inspections (not recipes or celebrity chefs without local relevance)
 
 **Remember: Prefer to MISS an article rather than send an irrelevant one.**
