@@ -1,179 +1,174 @@
 # Beacon - AI-Powered News Aggregator
 
-An intelligent news aggregator that scrapes local news websites, analyzes articles using a local LLM (Ollama), and delivers personalized, relevant news to your Discord via webhooks.
+Scrapes local news websites, filters articles using a local LLM (Ollama), and delivers personalized news to Discord.
 
-## Overview
+## Features
 
-Beacon is designed to run on a Raspberry Pi 5 using Docker containers, periodically checking news sources and filtering articles based on your personal interests. Only relevant news reaches your phone through Discord notifications.
+- **Automated scraping** from configurable news sources
+- **LLM-based filtering** using Ollama (analyzes full article content)
+- **Personalized relevance** based on your interests (preferences.md)
+- **Discord notifications** for relevant articles only
+- **Duplicate prevention** via SQLite database
+- **Raspberry Pi 5 optimized** (lightweight, runs in Docker)
 
-## Key Features
+## Quick Start
 
-- **Automated News Scraping**: Fetches articles from configurable local news websites
-- **AI-Powered Filtering**: Uses Ollama (llama3.2:1b or 3b) to analyze full article content
-- **Personalized Relevance**: Filters based on your interests defined in markdown
-- **Discord Integration**: Sends filtered news directly to your Discord server via webhook
-- **Duplicate Prevention**: Tracks seen articles in a local database
-- **Scheduled Execution**: Runs periodically via systemd timer with Docker
-- **Containerized Deployment**: Isolated, reproducible environment using Docker Compose
-- **Modern Python Tooling**: Uses uv for dependencies, ruff for linting, pytest for testing
-- **Raspberry Pi Optimized**: Lightweight and efficient for ARM architecture
+### Prerequisites
+- Raspberry Pi 5 or Linux system
+- Docker and Docker Compose
+- Ollama installed with llama3.2:1b model
+- Discord webhook URL
 
-## Architecture
+### Setup
 
+```bash
+# 1. Install Ollama and pull model
+curl -fsSL https://ollama.com/install.sh | sh
+ollama pull llama3.2:3b  # Recommended: Better reasoning than 1b
+
+# 2. Create environment file
+echo "DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/YOUR_ID/YOUR_TOKEN" > .env
+
+# 3. Customize preferences
+# Edit preferences.md with your interests
+
+# 4. Configure news sources
+# Edit config/config.yaml with your local news site(s)
+
+# 5. Build and test
+docker compose build
+docker compose run --rm beacon
+
+# 6. Setup scheduled execution (every 2 hours)
+sudo cp systemd/beacon.* /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable --now beacon.timer
 ```
-┌──────────────────────────────────────────────────────┐
-│              Host System (Raspberry Pi)              │
-│                                                      │
-│  ┌────────────────────┐    ┌──────────────────────┐ │
-│  │  Ollama Service    │    │  Beacon Container    │ │
-│  │  (llama3.2:1b)     │◄───│  (Python 3.14 + uv)  │ │
-│  └────────────────────┘    │                      │ │
-│                            │  Article Scraper     │ │
-│                            │  LLM Filter          │ │
-│                            │  Discord Notifier    │ │
-│                            │                      │ │
-│                            │  SQLite Database     │ │
-│                            └──────┬───────────────┘ │
-└───────────────────────────────────┼──────────────────┘
-                                    │
-            ┌───────────────────────┼─────────────────┐
-            │                       │                 │
-            ▼                       ▼                 ▼
-    ┌───────────────┐      ┌──────────────┐  ┌──────────────┐
-    │  News Sites   │      │ Preferences  │  │   Discord    │
-    │  (scraping)   │      │  (markdown)  │  │   Webhook    │
-    └───────────────┘      └──────────────┘  └──────────────┘
+
+## Configuration
+
+### preferences.md
+Define your interests, topics to follow, and keywords. The LLM uses this to score article relevance (1-10).
+
+### config/config.yaml
+```yaml
+ollama:
+  model: "llama3.2:3b"  # Upgrade from 1b for better accuracy
+
+filtering:
+  min_relevance_score: 8  # Only send articles scored 8+/10
 ```
 
-**Note**: Ollama runs directly on the host system, not in a container. Beacon runs in Docker with host networking to access Ollama.
+### News Source Selectors
+Update `config/config.yaml` with CSS selectors for your news site:
+```yaml
+news_sources:
+  - name: "Info Quilmes"
+    url: "https://www.infoquilmes.com.ar/"
+    selectors:
+      article_list: "a[href^='noticias/']"
+      title: "H4 a, H5 a, H6 a"
+      category: "span.volanta"
+```
+
+Use browser DevTools (F12) to find the right selectors for your site.
 
 ## Project Structure
 
 ```
 beacon/
-├── README.md                 # This file
-├── REQUIREMENTS.md           # Technical requirements and dependencies
-├── IMPLEMENTATION.md         # Detailed implementation guide
-├── preferences.md            # Your personal interest profile
-├── pyproject.toml            # Python project dependencies and configuration
-├── Dockerfile                # Container image definition
-├── docker-compose.yml        # Container orchestration
-├── .env                      # Environment variables (not in git)
-├── .gitignore                # Git ignore rules
 ├── src/
-│   ├── __init__.py
-│   ├── scraper.py           # News website scraping logic
-│   ├── llm_filter.py        # Ollama integration for filtering
-│   ├── discord_notifier.py  # Discord webhook integration
-│   ├── database.py          # Article tracking database
-│   ├── config.py            # Configuration management
-│   └── main.py              # Main orchestration script (logs to stdout)
+│   ├── main.py              # Main orchestrator
+│   ├── scraper.py           # Web scraping
+│   ├── llm_filter.py        # Ollama LLM filtering
+│   ├── discord_notifier.py  # Discord webhook
+│   ├── database.py          # SQLite article tracking
+│   └── config.py            # Configuration loader
 ├── tests/                    # pytest test suite
-│   ├── __init__.py
-│   ├── test_database.py
-│   ├── test_scraper.py
-│   ├── test_llm_filter.py
-│   └── test_discord.py
 ├── config/
-│   └── config.yaml          # Configuration (URLs, webhook, schedule)
-└── data/                     # Volume mount for persistence
-    └── seen_articles.db     # SQLite database for tracking
+│   └── config.yaml          # News sources, settings
+├── preferences.md           # Your interest profile (LLM context)
+├── .env                     # Discord webhook URL (not in git)
+├── data/                    # SQLite database (persisted)
+├── docker-compose.yml       # Container orchestration
+└── pyproject.toml          # Python dependencies
 ```
 
-## Quick Start
-
-### Prerequisites
-- Raspberry Pi 5 (or compatible Linux system)
-- Docker and Docker Compose installed
-- **Ollama installed and running** with llama3.2:1b model
-- Discord webhook URL
-
-### Setup (5 minutes)
+## Development
 
 ```bash
-# 1. Clone or create project directory
-cd /home/leonel/projects/beacon
-
-# 2. Verify Ollama is running
-curl http://localhost:11434/api/tags
-
-# 3. Create environment file
-echo "DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/YOUR_ID/YOUR_TOKEN" > .env
-
-# 4. Customize your preferences
-# Edit preferences.md with your interests
-
-# 5. Configure news sources
-# Edit config/config.yaml with your local news website(s)
-
-# 6. Build container
-docker compose build
-
-# 7. Test run (logs to stdout)
-docker compose run --rm beacon
-
-# 8. Setup scheduled execution (see IMPLEMENTATION.md)
-```
-
-### Development
-
-For local development without Docker:
-
-```bash
-# Ensure Ollama is running on localhost
-curl http://localhost:11434/api/tags
-
-# Install uv
+# Install dependencies (local development)
 curl -LsSf https://astral.sh/uv/install.sh | sh
-
-# Install dependencies
 uv sync --all-extras
 
 # Run tests
 uv run pytest
 
-# Format and lint
+# Lint and format
 uv run ruff format . && uv run ruff check .
 
-# Run application (logs to stdout)
+# Run locally (without Docker)
 uv run python src/main.py
 ```
 
-## Configuration Files
+## Monitoring
 
-- **preferences.md**: Define your interests, topics to follow, and keywords to prioritize
-- **config/config.yaml**: Set news sources, Discord webhook URL, and scraping intervals
-- **.env**: Store Discord webhook URL (never commit to git)
-- **pyproject.toml**: Python dependencies and tool configuration
+```bash
+# Check timer status
+systemctl status beacon.timer
+systemctl list-timers beacon.timer
 
-## Hardware Requirements
+# View logs
+journalctl -u beacon.service -f
 
-- **Raspberry Pi 5** (or similar ARM64 device)
-- **Minimum 4GB RAM** (8GB recommended for llama3.2:3b)
-- **10GB storage** for Docker image, Ollama (host), model, and database
+# Check database
+sqlite3 data/seen_articles.db "SELECT COUNT(*) FROM seen_articles;"
+
+# Manual run
+docker compose run --rm beacon
+```
+
+## Tuning
+
+### Too many false positives?
+- Increase `min_relevance_score` in config.yaml (e.g., 7 → 8)
+- Refine preferences.md with more specific interests
+- Upgrade to llama3.2:3b for better reasoning
+
+### Missing relevant articles?
+- Lower `min_relevance_score` in config.yaml (e.g., 8 → 7)
+- Add more keywords to preferences.md
+- Check LLM reasoning in logs: `journalctl -u beacon.service | grep "scored"`
+
+### Too slow?
+- Use llama3.2:1b (faster, less accurate)
+- Reduce `max_articles_per_run` in config.yaml
 
 ## Model Recommendations
 
-- **llama3.2:1b**: Fastest, lowest memory (1.3GB), good for basic filtering
-- **llama3.2:3b**: Better reasoning (2GB RAM), recommended for more accurate relevance detection
+| Model | RAM | Speed | Accuracy | Use Case |
+|-------|-----|-------|----------|----------|
+| llama3.2:1b | ~2GB | Fast | Basic | Quick testing |
+| llama3.2:3b | ~4GB | Medium | Good | **Recommended** |
+| qwen2.5:3b | ~4GB | Medium | Good | Alternative |
+| phi3:mini | ~3GB | Medium | Better | If 3b too slow |
+
+```bash
+# Switch models
+ollama pull llama3.2:3b
+# Update config.yaml: model: "llama3.2:3b"
+docker compose run --rm beacon  # Test
+```
 
 ## Technology Stack
 
-- **Python 3.14**: Application runtime
-- **uv**: Fast Python package manager
-- **ruff**: Code formatting and linting
-- **pytest**: Testing framework
-- **Docker**: Containerization (Beacon only)
-- **Ollama**: Local LLM inference (runs on host)
-- **SQLAlchemy**: Database ORM
-- **BeautifulSoup**: HTML parsing
-
-## Documentation
-
-- [REQUIREMENTS.md](./REQUIREMENTS.md) - Dependencies, Docker setup, configuration
-- [IMPLEMENTATION.md](./IMPLEMENTATION.md) - Step-by-step implementation guide
-- [preferences.md](./preferences.md) - Template for your interest profile
+- **Python 3.14** + uv (package manager)
+- **Ollama** (local LLM inference)
+- **Docker** (containerization)
+- **SQLite** (article tracking)
+- **BeautifulSoup** (HTML parsing)
+- **pytest + ruff** (testing + linting)
 
 ## License
 
-MIT License - See LICENSE file for details
+MIT License
