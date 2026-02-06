@@ -12,25 +12,27 @@ news_sources:
       description: "span.copete"
 
 ollama:
-  # Ollama is assumed to be running externally (host system)
-  base_url: "http://localhost:11434"
+  # Ollama base URL - can be overridden with OLLAMA_BASE_URL env var
+  # For docker-compose: http://ollama:11434
+  # For host system: http://localhost:11434
+  base_url: "${OLLAMA_BASE_URL}"
   model: "llama3.2:1b"
   timeout: 60
 
 discord:
-  webhook_url: "${DISCORD_WEBHOOK_URL}"  # Load from environment
+  webhook_url: "${DISCORD_WEBHOOK_URL}" # Load from environment
 
 database:
   path: "./data/seen_articles.db"
 
 scraping:
-  check_interval: 7200  # seconds (2 hours)
+  check_interval: 7200 # seconds (2 hours)
   max_articles_per_run: 20
   user_agent: "Mozilla/5.0 (compatible; BeaconBot/1.0)"
 
 filtering:
   preferences_file: "./preferences.md"
-  min_relevance_score: 7  # 1-10 scale
+  min_relevance_score: 8 # 1-10 scale (strict threshold to reduce false positives)
 
 logging:
   level: "INFO"

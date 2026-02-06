@@ -13,7 +13,7 @@ from src.scraper import NewsScraper
 # Configure logging to stdout
 logging.basicConfig(
     level=logging.INFO,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    format="%(asctime)s - %(levelname)s - %(message)s",
     handlers=[logging.StreamHandler(sys.stdout)],
 )
 
@@ -51,7 +51,6 @@ class BeaconApp:
         # Load preferences
         prefs_file = self.config.get_preferences_file()
         self.llm_filter.load_preferences(prefs_file)
-        logger.info(f"Loaded preferences from {prefs_file}")
 
         self.min_relevance_score = self.config.get_min_relevance_score()
 
@@ -91,7 +90,7 @@ class BeaconApp:
                 for article in articles:
                     # Check if already seen
                     if self.db.is_article_seen(article["url"]):
-                        logger.debug(f"Skipping seen article: {article['title'][:50]}...")
+                        logger.info(f"Skipping seen article: {article['title'][:50]}...")
                         continue
 
                     new_articles += 1

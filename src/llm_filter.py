@@ -1,7 +1,7 @@
 """LLM-based article filtering using Ollama."""
 
+import json
 import logging
-import re
 from pathlib import Path
 from typing import Dict, Optional, Tuple
 
@@ -71,15 +71,16 @@ class LLMFilter:
         try:
             logger.debug(f"Analyzing article: {article.get('title', 'Unknown')[:50]}...")
 
-            # Call Ollama API
+            # Call Ollama API with JSON mode for structured output
             response = ollama.generate(
                 model=self.model,
                 prompt=prompt,
+                format="json",  # Enable JSON mode
                 options={"temperature": 0.3},  # Consistent scoring
             )
 
-            # Parse response
-            score, reason = self._parse_response(response["response"])
+            # Parse JSON response
+            score, reason = self._parse_json_response(response["response"])
 
             logger.info(f"Article scored {score}/10: {article.get('title', 'Unknown')[:50]}...")
             return score, reason
@@ -109,8 +110,7 @@ class LLMFilter:
             content = content[:max_content_length] + "..."
 
         prompt = (
-            f"""You are a personal news filter. Based on the user's interests """
-            f"""below, determine if this article is relevant.
+            f"""You are a strict news filter. Analyze if this article matches the user's interests.
 
 USER INTERESTS:
 {preferences}
@@ -120,47 +120,67 @@ Title: {title}
 Category: {category}
 Content: {content}
 
-TASK:
-Rate the relevance of this article from 1-10 (10 = highly relevant, 1 = not relevant).
-Provide your rating and a brief one-sentence explanation.
+CRITICAL RULES:
+1. The article MUST be directly about one of the user's topics - do NOT make loose connections
+2. When in doubt, score LOW - false negatives are better than false positives
+3. Generic local news is NOT relevant unless it matches a specific topic
+4. Check if the article matches the "Topics to Ignore" section - if so, score 1-2
+5. Technology topics must be ACTUALLY about technology, not just any local achievement
 
-FORMAT YOUR RESPONSE EXACTLY AS:
-SCORE: [number]
-REASON: [brief explanation]
+ANALYSIS PROCESS:
+1. First, check if the article is in the "Topics to Ignore" list
+2. Then, identify which specific topic (if any) this article addresses
+3. Verify the connection is DIRECT, not tangential
+4. Rate the relevance from 1-10 (prefer scores 1-5 unless truly relevant)
+
+Respond with ONLY valid JSON in this exact format:
+{{
+  "score": <number from 1-10>,
+  "reason": "<brief explanation of which topic it matches, or why it doesn't match>"
+}}
 """
         )
         return prompt
 
-    def _parse_response(self, response: str) -> Tuple[int, str]:
-        """Parse LLM response to extract score and reasoning.
+    def _parse_json_response(self, response: str) -> Tuple[int, str]:
+        """Parse LLM JSON response to extract score and reasoning.
 
         Args:
-            response: Raw LLM response text
+            response: JSON response from LLM
 
         Returns:
             Tuple of (score, reason)
         """
-        # Look for SCORE: pattern (handles negative numbers)
-        score_match = re.search(r"SCORE:\s*(-?\d+)", response, re.IGNORECASE)
-        reason_match = re.search(r"REASON:\s*(.+?)(?:\n|$)", response, re.IGNORECASE)
+        try:
+            # Parse JSON response
+            data = json.loads(response)
 
-        # Extract score
-        if score_match:
-            score = int(score_match.group(1))
-            # Clamp to 1-10 range
-            score = max(1, min(10, score))
-        else:
-            logger.warning(f"Could not parse score from response: {response[:100]}")
-            score = 5  # Default middle score
+            # Extract score
+            score = data.get("score")
+            if score is None:
+                logger.warning(f"No 'score' field in JSON response: {response[:200]}")
+                score = 1  # Default to low score on error
+            else:
+                # Ensure score is an integer and clamp to 1-10 range
+                score = int(score)
+                score = max(1, min(10, score))
 
-        # Extract reason
-        if reason_match:
-            reason = reason_match.group(1).strip()
-        else:
-            logger.warning("Could not parse reason from response")
-            reason = "No reason provided"
+            # Extract reason
+            reason = data.get("reason", "No reason provided")
+            if not reason or not isinstance(reason, str):
+                reason = "No reason provided"
 
-        return score, reason
+            return score, reason
+
+        except json.JSONDecodeError as e:
+            logger.error(f"Failed to parse JSON response: {e}")
+            logger.debug(f"Raw response: {response[:500]}")
+            # Return low score on parse error
+            return 1, f"JSON parse error: {str(e)}"
+        except (ValueError, TypeError) as e:
+            logger.error(f"Invalid score value in response: {e}")
+            logger.debug(f"Raw response: {response[:500]}")
+            return 1, f"Invalid response format: {str(e)}"
 
     def test_connection(self) -> bool:
         """Test connection to Ollama API.
