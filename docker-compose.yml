@@ -1,0 +1,12 @@
+services:
+  beacon:
+    build: .
+    container_name: beacon
+    env_file: .env
+    volumes:
+      # Persist SQLite database across runs
+      - beacon-data:/app/data
+    # No restart policy - this is a one-shot task triggered by cron
+
+volumes:
+  beacon-data:
