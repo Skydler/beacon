@@ -42,6 +42,7 @@ class BeaconApp:
             api_token=github_models_config["api_token"],
             model=github_models_config["model"],
             timeout=github_models_config["timeout"],
+            batch_size=github_models_config.get("batch_size", 5),
         )
 
         self.scraper = NewsScraper()
@@ -86,38 +87,57 @@ class BeaconApp:
                 total_articles += len(articles)
                 logger.info(f"Found {len(articles)} articles from {source['name']}")
 
-                # Process each article
+                # Filter out already-seen articles
+                unseen_articles = []
                 for article in articles:
-                    # Check if already seen
                     if self.db.is_article_seen(article["url"]):
                         logger.info(f"Skipping seen article: {article['title'][:50]}...")
-                        continue
+                    else:
+                        unseen_articles.append(article)
 
-                    new_articles += 1
+                new_articles += len(unseen_articles)
 
-                    # Analyze with LLM
-                    score, reason = self.llm_filter.analyze_article(article)
+                if not unseen_articles:
+                    logger.info(f"No new articles from {source['name']}")
+                    continue
 
-                    # Mark as seen in database
-                    self.db.mark_article_seen(
-                        url=article["url"],
-                        title=article["title"],
-                        relevance_score=score,
+                # Analyze articles in batches
+                batch_size = self.llm_filter.batch_size
+                for batch_start in range(0, len(unseen_articles), batch_size):
+                    batch = unseen_articles[batch_start : batch_start + batch_size]
+                    logger.info(
+                        f"Analyzing batch of {len(batch)} articles "
+                        f"({batch_start + 1}-{batch_start + len(batch)} "
+                        f"of {len(unseen_articles)})"
                     )
 
-                    # Send notification if relevant
-                    if score >= self.min_relevance_score:
-                        logger.info(f"Relevant article (score {score}): {article['title'][:50]}...")
+                    results = self.llm_filter.analyze_articles_batch(batch)
 
-                        if not dry_run:
-                            success = self.discord.send_article(article, score, reason)
-                            if success:
+                    for article, (score, reason) in zip(batch, results):
+                        # Mark as seen in database
+                        self.db.mark_article_seen(
+                            url=article["url"],
+                            title=article["title"],
+                            relevance_score=score,
+                        )
+
+                        # Send notification if relevant
+                        if score >= self.min_relevance_score:
+                            logger.info(
+                                f"Relevant article (score {score}): {article['title'][:50]}..."
+                            )
+
+                            if not dry_run:
+                                success = self.discord.send_article(article, score, reason)
+                                if success:
+                                    sent_notifications += 1
+                            else:
+                                logger.info("[DRY RUN] Would send notification")
                                 sent_notifications += 1
                         else:
-                            logger.info("[DRY RUN] Would send notification")
-                            sent_notifications += 1
-                    else:
-                        logger.debug(f"Filtered out (score {score}): {article['title'][:50]}...")
+                            logger.debug(
+                                f"Filtered out (score {score}): {article['title'][:50]}..."
+                            )
 
             except Exception as e:
                 logger.error(f"Error processing source {source['name']}: {e}")
