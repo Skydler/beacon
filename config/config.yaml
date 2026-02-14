@@ -17,7 +17,7 @@ github_models:
   api_token: "${GITHUB_MODELS_TOKEN}"
   model: "gpt-4o-mini"
   timeout: 60
-  batch_size: 5  # Number of articles to analyze per LLM call (1-10, recommended: 5)
+  batch_size: 5 # Number of articles to analyze per LLM call (1-10, recommended: 5)
 
 discord:
   webhook_url: "${DISCORD_WEBHOOK_URL}" # Load from environment

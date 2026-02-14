@@ -60,13 +60,18 @@ I'm interested in these topics if they have significant local impact:
 - **Specialty Food Stores**: New specialty shops, delis, food markets opening
 - **Cooking Classes & Workshops**: Culinary education, food-related workshops
 
+### Infrastructure & Urban Development (Medium Impact)
+- **Road Improvements**: Major road repairs, paving projects, new roads
+- **Public Infrastructure**: Bridges, tunnels, public works affecting daily commutes
+- **Urban Development**: Streetlights, sidewalks, drainage systems, traffic signals
+- **Utility Infrastructure**: Water, sewage, electrical grid improvements
+
 ## Low Priority Topics
 
 Only notify me if these are major stories with broad impact:
 
 - **Regular Weather**: Normal forecasts, seasonal weather (unless extreme)
 - **Transportation**: Public transit updates, traffic systems (unless major disruption)
-- **Infrastructure**: Road work, construction projects (unless major impact)
 - **Education**: School system news (unless directly affecting families)
 - **Environment**: Environmental initiatives (unless immediate health impact)
 
@@ -126,6 +131,13 @@ Do NOT notify me about articles primarily focused on:
 - Pizzeria, bakery, cafe, bistro, brewery
 - Food safety, health inspection, food recall
 
+**Infrastructure:**
+- Road paving, street repair, road improvement
+- Bridge construction, infrastructure project
+- Streetlight installation, sidewalk repair
+- Drainage system, sewage, water infrastructure
+- Traffic signal, traffic improvement
+
 ### Negative keywords (reduce score):
 - Casino, gambling, lottery
 - Horoscope, astrology
@@ -158,10 +170,20 @@ Use this scale when rating articles:
 
 - **10**: Urgent/critical (disease outbreak, severe weather warning, major security breach)
 - **8-9**: High-priority topic with direct local impact (price increases, tech events, health alerts, restaurant openings, food festivals)
-- **6-7**: Medium-priority topic with clear relevance (tech business, healthcare access, service changes, specialty food stores)
-- **4-5**: Low-priority topic or weak local connection (minor weather, infrastructure updates)
+- **6-7**: Medium-priority topic with clear relevance (tech business, healthcare access, service changes, specialty food stores, infrastructure improvements)
+- **4-5**: Low-priority topic or weak local connection (minor weather updates)
 - **2-3**: Marginally relevant or contains negative keywords
 - **1**: Should be ignored based on ignore list
+
+### Geographic Priority Boost
+
+Articles about these specific areas should receive a +1 to +2 score boost (don't go above 10):
+
+- **Quilmes Este**
+- **Berazategui**
+- **Ezpeleta**
+
+This boost applies to articles that are already relevant (score 4+). Don't boost ignored topics just because they mention these areas.
 
 ## Examples
 
@@ -200,8 +222,13 @@ Use this scale when rating articles:
 
 - "New Coworking Space Opens Downtown" → **5** (Tech-adjacent, minor impact)
 - "School District Tests New Learning App" → **5** (Education tech)
-- "City Announces New Bike Lane Construction" → **4** (Infrastructure, low impact)
 - "Weekend Weather: Sunny with Mild Temperatures" → **3** (Regular weather forecast)
+
+**Infrastructure:**
+- "Major Road Repaving Project Begins on Main Avenue" → **7** (Infrastructure improvement)
+- "New Traffic Lights Installed in Quilmes Este" → **7** (Infrastructure + geographic boost)
+- "City Repairs Drainage System After Recent Floods" → **6** (Infrastructure with practical impact)
+- "Bridge Construction to Improve Berazategui Access" → **7** (Infrastructure + geographic boost)
 
 ### ❌ NOT RELEVANT Articles (Score 1-3):
 
@@ -236,5 +263,8 @@ Use this scale when rating articles:
 **Health MUST be actionable** - Outbreaks, alerts, access issues (not general medical science)
 **Weather MUST be extreme or emergency** - Not routine forecasts
 **Food & Dining MUST be about venues, events, or safety** - Restaurant openings, food festivals, inspections (not recipes or celebrity chefs without local relevance)
+**Infrastructure MUST have practical impact** - Major projects, road improvements, utility work affecting residents (not minor beautification or park renovations)
+
+**Geographic relevance**: Articles from Quilmes Este, Berazategui, or Ezpeleta get a small score boost (+1 to +2), but only if they're already relevant topics. Don't send irrelevant stories just because they mention these areas.
 
 **Remember: Prefer to MISS an article rather than send an irrelevant one.**
