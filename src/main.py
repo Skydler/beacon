@@ -81,7 +81,7 @@ class BeaconApp:
                 articles = self.scraper.scrape_news_site(
                     url=source["url"],
                     selectors=source["selectors"],
-                    max_articles=source.get("max_articles", 20),
+                    max_articles=self.config.get_max_articles_per_source(),
                 )
 
                 total_articles += len(articles)

@@ -151,3 +151,11 @@ class Config:
             Minimum score (1-10) for notifying about articles
         """
         return self.config.get("filtering", {}).get("min_relevance_score", 7)
+
+    def get_max_articles_per_source(self) -> int:
+        """Get maximum number of articles to process per source.
+
+        Returns:
+            Maximum number of articles to scrape from each source
+        """
+        return self.config.get("scraping", {}).get("max_articles_per_run", 20)
