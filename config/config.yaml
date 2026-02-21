@@ -1,4 +1,16 @@
 news_sources:
+  - name: "La Nacion"
+    url: "https://www.lanacion.com.ar"
+    selectors:
+      # Article links inside ln-card elements (hrefs follow /section/slug-nidYYYYMMDD/ pattern)
+      article_list: "article.ln-card a[href*='nid']"
+      # Title is always present inside the description container
+      title: ".ln-card .description-container .title"
+      # Category label (only present on featured articles; absent on most cards)
+      category: ".ln-card .description-container .author-section"
+      # Excerpt/summary (only present on larger featured articles)
+      description: ".ln-card .description-container .subhead"
+
   - name: "Info Quilmes"
     url: "https://www.infoquilmes.com.ar/"
     selectors:
