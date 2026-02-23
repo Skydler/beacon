@@ -91,7 +91,7 @@ class BeaconApp:
                 unseen_articles = []
                 for article in articles:
                     if self.db.is_article_seen(article["url"]):
-                        logger.info(f"Skipping seen article: {article['title'][:50]}...")
+                        logger.info(f"Skipping seen article: {article['title']}...")
                     else:
                         unseen_articles.append(article)
 
@@ -123,9 +123,7 @@ class BeaconApp:
 
                         # Send notification if relevant
                         if score >= self.min_relevance_score:
-                            logger.info(
-                                f"Relevant article (score {score}): {article['title'][:50]}..."
-                            )
+                            logger.info(f"Relevant article (score {score}): {article['title']}...")
 
                             if not dry_run:
                                 success = self.discord.send_article(article, score, reason)
@@ -135,9 +133,7 @@ class BeaconApp:
                                 logger.info("[DRY RUN] Would send notification")
                                 sent_notifications += 1
                         else:
-                            logger.debug(
-                                f"Filtered out (score {score}): {article['title'][:50]}..."
-                            )
+                            logger.debug(f"Filtered out (score {score}): {article['title']}...")
 
             except Exception as e:
                 logger.error(f"Error processing source {source['name']}: {e}")
