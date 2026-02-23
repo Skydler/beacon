@@ -6,7 +6,6 @@ from unittest.mock import MagicMock, patch
 import pytest
 from fastapi.testclient import TestClient
 
-
 # ---------------------------------------------------------------------------
 # Shared fixtures
 # ---------------------------------------------------------------------------
@@ -130,3 +129,39 @@ def test_index_shows_reasons(client):
     response = client.get("/")
     assert "Matches local news interest" in response.text
     assert "Too general" in response.text
+
+
+def test_sortable_th_attributes(client):
+    """Title, Scraped at, Score and Status headers must carry sortable markup."""
+    response = client.get("/")
+    html = response.text
+    # Each sortable column must have the CSS class and a data-col attribute
+    assert 'class="col-title sortable"' in html
+    assert 'class="col-date sortable"' in html
+    assert 'class="col-score sortable"' in html
+    assert 'class="col-status sortable"' in html
+
+
+def test_sortable_data_col_values(client):
+    """data-col attributes must be present with the correct column indices."""
+    response = client.get("/")
+    html = response.text
+    assert 'data-col="0"' in html  # Title
+    assert 'data-col="1"' in html  # Scraped at
+    assert 'data-col="2"' in html  # Score
+    assert 'data-col="3"' in html  # Status
+
+
+def test_reason_column_not_sortable(client):
+    """Reason column must NOT be sortable."""
+    response = client.get("/")
+    # The Reason th must not carry the sortable class
+    assert '<th class="col-reason">Reason</th>' in response.text
+
+
+def test_sort_script_present(client):
+    """Page must include the client-side sorting script."""
+    response = client.get("/")
+    assert "th.sortable" in response.text
+    assert "sort-asc" in response.text
+    assert "sort-desc" in response.text

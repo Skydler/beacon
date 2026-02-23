@@ -131,9 +131,26 @@
 
     .col-title  { width: 40%; }
     .col-date   { width: 12%; }
-    .col-score  { width: 6%;  text-align: center; }
+    .col-score  { width: 8%;  text-align: center; }
     .col-status { width: 10%; }
-    .col-reason { width: 32%; }
+    .col-reason { width: 30%; }
+
+    th.sortable {
+      cursor: pointer;
+      user-select: none;
+      white-space: nowrap;
+    }
+
+    th.sortable:hover { background: #ebebeb; }
+
+    th.sortable::after {
+      content: " \2195";
+      font-size: 0.7em;
+      color: #bbb;
+    }
+
+    th.sort-asc::after  { content: " \2191"; color: #444; }
+    th.sort-desc::after { content: " \2193"; color: #444; }
   </style>
 </head>
 <body>
@@ -168,10 +185,10 @@
     <table>
       <thead>
         <tr>
-          <th class="col-title">Title</th>
-          <th class="col-date">Scraped at</th>
-          <th class="col-score">Score</th>
-          <th class="col-status">Status</th>
+          <th class="col-title sortable" data-col="0">Title</th>
+          <th class="col-date sortable" data-col="1">Scraped at</th>
+          <th class="col-score sortable" data-col="2">Score</th>
+          <th class="col-status sortable" data-col="3">Status</th>
           <th class="col-reason">Reason</th>
         </tr>
       </thead>
@@ -214,6 +231,82 @@
   </section>
   {% endfor %}
 </main>
+
+<script>
+  // Sort order map: "colIndex-tableIndex" -> "asc" | "desc" | undefined
+  const sortState = {};
+
+  // Numeric sort key for status badges: accepted=0, pending=1, rejected=2
+  const STATUS_ORDER = { "Accepted": 0, "Pending": 1, "Rejected": 2 };
+
+  function cellValue(row, colIndex) {
+    const cell = row.cells[colIndex];
+    if (!cell) return "";
+    switch (colIndex) {
+      case 0: // Title — plain text
+        return cell.textContent.trim().toLowerCase();
+      case 1: // Scraped at — ISO-like date string "YYYY-MM-DD HH:MM" or "—"
+        return cell.textContent.trim();
+      case 2: // Score — numeric, "—" for pending
+        return cell.textContent.trim();
+      case 3: // Status — badge text
+        return (cell.querySelector(".badge") || cell).textContent.trim();
+      default:
+        return cell.textContent.trim().toLowerCase();
+    }
+  }
+
+  function compareValues(a, b, colIndex) {
+    if (colIndex === 2) {
+      // Numeric: treat "—" as -1 so pending sorts last when ascending
+      const na = a === "—" ? -1 : parseFloat(a);
+      const nb = b === "—" ? -1 : parseFloat(b);
+      return na - nb;
+    }
+    if (colIndex === 3) {
+      // Status: use fixed ordering
+      const oa = STATUS_ORDER[a] ?? 99;
+      const ob = STATUS_ORDER[b] ?? 99;
+      return oa - ob;
+    }
+    // String comparison (title, date)
+    return a < b ? -1 : a > b ? 1 : 0;
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll("th.sortable").forEach((th) => {
+      th.addEventListener("click", () => {
+        const table = th.closest("table");
+        const tbody = table.querySelector("tbody");
+        const colIndex = parseInt(th.dataset.col, 10);
+        const tableId = Array.from(document.querySelectorAll("table")).indexOf(table);
+        const key = `${tableId}-${colIndex}`;
+
+        // Toggle direction
+        const current = sortState[key];
+        const dir = current === "asc" ? "desc" : "asc";
+        sortState[key] = dir;
+
+        // Reset all th indicators for this table, then set active one
+        table.querySelectorAll("th.sortable").forEach((h) => {
+          h.classList.remove("sort-asc", "sort-desc");
+        });
+        th.classList.add(dir === "asc" ? "sort-asc" : "sort-desc");
+
+        // Sort rows
+        const rows = Array.from(tbody.querySelectorAll("tr"));
+        rows.sort((rowA, rowB) => {
+          const a = cellValue(rowA, colIndex);
+          const b = cellValue(rowB, colIndex);
+          const cmp = compareValues(a, b, colIndex);
+          return dir === "asc" ? cmp : -cmp;
+        });
+
+        rows.forEach((row) => tbody.appendChild(row));
+      });
+    });
+  });
+</script>
 
 </body>
 </html>
