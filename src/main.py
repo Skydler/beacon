@@ -119,6 +119,8 @@ class BeaconApp:
                             url=article["url"],
                             title=article["title"],
                             relevance_score=score,
+                            reason=reason,
+                            source_name=source["name"],
                         )
 
                         # Send notification if relevant

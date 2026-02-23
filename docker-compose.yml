@@ -8,5 +8,17 @@ services:
       - beacon-data:/app/data
     # No restart policy - this is a one-shot task triggered by cron
 
+  beacon-web:
+    build: .
+    container_name: beacon-web
+    command: uv run uvicorn src.web:app --host 0.0.0.0 --port 3012
+    env_file: .env
+    volumes:
+      - beacon-data:/app/data:ro   # read-only; web service never writes to DB
+      - ./config:/app/config:ro
+    ports:
+      - "3012:3012"
+    restart: unless-stopped
+
 volumes:
   beacon-data:

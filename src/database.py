@@ -1,7 +1,7 @@
 """Database module for tracking seen articles."""
 
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, List, Optional
 
 from sqlalchemy import Boolean, Column, DateTime, Integer, String, create_engine
@@ -20,9 +20,11 @@ class Article(Base):
     id = Column(Integer, primary_key=True)
     url = Column(String, unique=True, nullable=False, index=True)
     title = Column(String, nullable=False)
-    scraped_at = Column(DateTime, default=datetime.utcnow)
+    scraped_at = Column(DateTime, default=datetime.now(tz=timezone.utc))
     relevance_score = Column(Integer)
     notified = Column(Boolean, default=False)
+    reason = Column(String, nullable=True)
+    source_name = Column(String, nullable=True)
 
     def __repr__(self) -> str:
         return f"<Article(url='{self.url}', title='{self.title}', score={self.relevance_score})>"
@@ -64,7 +66,12 @@ class Database:
             session.close()
 
     def mark_article_seen(
-        self, url: str, title: str, relevance_score: Optional[int] = None
+        self,
+        url: str,
+        title: str,
+        relevance_score: Optional[int] = None,
+        reason: Optional[str] = None,
+        source_name: Optional[str] = None,
     ) -> None:
         """Mark an article as seen and store in database.
 
@@ -72,6 +79,8 @@ class Database:
             url: Article URL
             title: Article title
             relevance_score: Optional relevance score from LLM (1-10)
+            reason: Optional LLM explanation for the score
+            source_name: Optional name of the configured source this article came from
         """
         session = self._get_session()
         try:
@@ -80,6 +89,8 @@ class Database:
                 title=title,
                 relevance_score=relevance_score,
                 notified=(relevance_score is not None),
+                reason=reason,
+                source_name=source_name,
             )
             session.add(article)
             session.commit()
@@ -104,7 +115,7 @@ class Database:
         try:
             from datetime import timedelta
 
-            cutoff_date = datetime.utcnow() - timedelta(days=days)
+            cutoff_date = datetime.now(timezone.utc) - timedelta(days=days)
             articles = (
                 session.query(Article)
                 .filter(Article.scraped_at >= cutoff_date)
@@ -119,6 +130,8 @@ class Database:
                     "scraped_at": a.scraped_at,
                     "relevance_score": a.relevance_score,
                     "notified": a.notified,
+                    "reason": a.reason,
+                    "source_name": a.source_name,
                 }
                 for a in articles
             ]

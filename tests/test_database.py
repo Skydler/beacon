@@ -24,7 +24,9 @@ def test_mark_article_seen(db):
     url = "https://example.com/article1"
     title = "Test Article"
 
-    db.mark_article_seen(url, title, relevance_score=8)
+    db.mark_article_seen(
+        url, title, relevance_score=8, reason="Matches local news interest", source_name="La Nacion"
+    )
 
     assert db.is_article_seen(url) is True
     assert db.get_article_count() == 1
@@ -50,16 +52,23 @@ def test_duplicate_url_handling(db):
 
 def test_get_recent_articles(db):
     """Test retrieving recent articles."""
-    # Add some articles
-    db.mark_article_seen("https://example.com/1", "Article 1", 7)
-    db.mark_article_seen("https://example.com/2", "Article 2", 8)
-    db.mark_article_seen("https://example.com/3", "Article 3", 9)
+    db.mark_article_seen(
+        "https://example.com/1", "Article 1", 7, reason="Low match", source_name="Source A"
+    )
+    db.mark_article_seen(
+        "https://example.com/2", "Article 2", 8, reason="Good match", source_name="Source B"
+    )
+    db.mark_article_seen(
+        "https://example.com/3", "Article 3", 9, reason="Strong match", source_name="Source A"
+    )
 
     recent = db.get_recent_articles(days=7)
 
     assert len(recent) == 3
     assert recent[0]["title"] == "Article 3"  # Most recent first
     assert recent[0]["relevance_score"] == 9
+    assert recent[0]["reason"] == "Strong match"
+    assert recent[0]["source_name"] == "Source A"
 
 
 def test_get_recent_articles_filters_by_date(db):
@@ -85,6 +94,8 @@ def test_article_without_relevance_score(db):
     articles = db.get_recent_articles()
     assert articles[0]["relevance_score"] is None
     assert articles[0]["notified"] is False
+    assert articles[0]["reason"] is None
+    assert articles[0]["source_name"] is None
 
 
 def test_article_with_relevance_score_marks_notified(db):

@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Beacon — News Dashboard</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      font-size: 14px;
+      background: #f5f5f5;
+      color: #222;
+      line-height: 1.5;
+    }
+
+    header {
+      background: #1a1a2e;
+      color: #e0e0e0;
+      padding: 16px 24px;
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+    }
+
+    header h1 { font-size: 1.25rem; color: #fff; }
+
+    header .meta {
+      font-size: 0.8rem;
+      color: #888;
+    }
+
+    main { padding: 24px; max-width: 1200px; margin: 0 auto; }
+
+    section.source {
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      margin-bottom: 28px;
+      overflow: hidden;
+    }
+
+    .source-header {
+      padding: 14px 18px;
+      background: #f0f0f0;
+      border-bottom: 1px solid #ddd;
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .source-header h2 { font-size: 1rem; }
+
+    .source-header a { color: #1a73e8; text-decoration: none; }
+    .source-header a:hover { text-decoration: underline; }
+
+    .source-stats {
+      font-size: 0.78rem;
+      color: #666;
+      margin-left: auto;
+    }
+
+    .source-stats span { margin-left: 8px; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead tr { background: #fafafa; }
+
+    th {
+      text-align: left;
+      padding: 8px 12px;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #666;
+      border-bottom: 1px solid #eee;
+    }
+
+    td {
+      padding: 9px 12px;
+      border-bottom: 1px solid #f0f0f0;
+      vertical-align: top;
+    }
+
+    tr:last-child td { border-bottom: none; }
+
+    tr.accepted { background: #f6fff6; }
+    tr.rejected { background: #fff8f8; }
+    tr.pending  { background: #fffdf0; }
+
+    .title-cell a {
+      color: #1a1a2e;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .title-cell a:hover { text-decoration: underline; color: #1a73e8; }
+
+    .score {
+      font-weight: 700;
+      text-align: center;
+    }
+
+    tr.accepted .score { color: #2a7a2a; }
+    tr.rejected .score { color: #b33; }
+    tr.pending  .score { color: #888; }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .badge.accept  { background: #d4edda; color: #155724; }
+    .badge.reject  { background: #f8d7da; color: #721c24; }
+    .badge.pending { background: #fff3cd; color: #856404; }
+
+    .reason { color: #555; font-size: 0.85em; }
+
+    .date { white-space: nowrap; color: #777; font-size: 0.82em; }
+
+    .empty { padding: 20px 18px; color: #999; font-style: italic; }
+
+    .col-title  { width: 40%; }
+    .col-date   { width: 12%; }
+    .col-score  { width: 6%;  text-align: center; }
+    .col-status { width: 10%; }
+    .col-reason { width: 32%; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Beacon</h1>
+  <span class="meta">Last 3 days &middot; {{ generated_at }}</span>
+</header>
+
+<main>
+  {% for group in by_source %}
+  <section class="source">
+    <div class="source-header">
+      <h2>
+        {% if group.url %}
+          <a href="{{ group.url }}" target="_blank" rel="noopener">{{ group.name }}</a>
+        {% else %}
+          {{ group.name }}
+        {% endif %}
+      </h2>
+      <div class="source-stats">
+        <span>{{ group.stats.total }} articles</span>
+        <span>&middot; <strong style="color:#2a7a2a">{{ group.stats.accepted }}</strong> accepted</span>
+        <span>&middot; <strong style="color:#b33">{{ group.stats.rejected }}</strong> rejected</span>
+        {% if group.stats.pending > 0 %}
+        <span>&middot; {{ group.stats.pending }} pending</span>
+        {% endif %}
+      </div>
+    </div>
+
+    {% if group.articles %}
+    <table>
+      <thead>
+        <tr>
+          <th class="col-title">Title</th>
+          <th class="col-date">Scraped at</th>
+          <th class="col-score">Score</th>
+          <th class="col-status">Status</th>
+          <th class="col-reason">Reason</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for article in group.articles %}
+        {% if article.relevance_score is none %}
+          {% set row_class = "pending" %}
+        {% elif article.relevance_score >= threshold %}
+          {% set row_class = "accepted" %}
+        {% else %}
+          {% set row_class = "rejected" %}
+        {% endif %}
+        <tr class="{{ row_class }}">
+          <td class="title-cell">
+            <a href="{{ article.url }}" target="_blank" rel="noopener">{{ article.title }}</a>
+          </td>
+          <td class="date">
+            {{ article.scraped_at.strftime("%Y-%m-%d %H:%M") if article.scraped_at else "—" }}
+          </td>
+          <td class="score">
+            {{ article.relevance_score if article.relevance_score is not none else "—" }}
+          </td>
+          <td>
+            {% if article.relevance_score is none %}
+              <span class="badge pending">Pending</span>
+            {% elif article.relevance_score >= threshold %}
+              <span class="badge accept">Accepted</span>
+            {% else %}
+              <span class="badge reject">Rejected</span>
+            {% endif %}
+          </td>
+          <td class="reason">{{ article.reason or "—" }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <p class="empty">No articles in the last 3 days.</p>
+    {% endif %}
+  </section>
+  {% endfor %}
+</main>
+
+</body>
+</html>
