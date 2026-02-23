@@ -18,5 +18,3 @@ COPY preferences.md .
 
 # Create data directory for SQLite
 RUN mkdir -p data
-
-ENTRYPOINT ["uv", "run", "--no-dev", "python", "src/main.py"]
