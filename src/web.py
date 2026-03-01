@@ -76,7 +76,39 @@ def _group_by_source(
     return result
 
 
+def _split_today_older(
+    articles: List[Dict[str, Any]],
+) -> Dict[str, List[Dict[str, Any]]]:
+    """Split articles into today's articles and older articles.
+
+    Args:
+        articles: List of article dicts, each with a ``scraped_at`` datetime.
+
+    Returns:
+        Dict with keys ``today`` and ``older``, each containing a list of articles.
+    """
+    today_utc = datetime.now(timezone.utc).date()
+    today: List[Dict[str, Any]] = []
+    older: List[Dict[str, Any]] = []
+    for article in articles:
+        scraped = article.get("scraped_at")
+        if scraped is not None and scraped.date() == today_utc:
+            today.append(article)
+        else:
+            older.append(article)
+    return {"today": today, "older": older}
+
+
 def _source_stats(articles: List[Dict[str, Any]], threshold: int) -> Dict[str, int]:
+    """Compute accept/reject/pending stats for a list of articles.
+
+    Args:
+        articles: List of article dicts.
+        threshold: Minimum relevance score to count as accepted.
+
+    Returns:
+        Dict with keys ``total``, ``accepted``, ``rejected``, ``pending``.
+    """
     total = len(articles)
     accepted = sum(
         1
@@ -105,9 +137,12 @@ def index(request: Request) -> HTMLResponse:
 
     by_source = _group_by_source(articles, sources)
 
-    # Attach per-source stats
+    # Attach per-source stats and today/older split
     for group in by_source:
         group["stats"] = _source_stats(group["articles"], threshold)
+        split = _split_today_older(group["articles"])
+        group["today"] = split["today"]
+        group["older"] = split["older"]
 
     now_utc = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
 

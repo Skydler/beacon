@@ -129,6 +129,45 @@
 
     .empty { padding: 20px 18px; color: #999; font-style: italic; }
 
+    .day-label {
+      padding: 8px 18px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: #555;
+      background: #f7f7f7;
+      border-bottom: 1px solid #eee;
+    }
+
+    .toggle-older {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 6px 14px;
+      margin: 10px 18px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background: #fafafa;
+      color: #555;
+      font-size: 0.78rem;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .toggle-older:hover { background: #f0f0f0; }
+
+    .toggle-older .arrow {
+      display: inline-block;
+      transition: transform 0.2s;
+      font-size: 0.65rem;
+    }
+
+    .toggle-older.expanded .arrow { transform: rotate(180deg); }
+
+    .older-section { display: none; }
+    .older-section.visible { display: block; }
+
     .col-title  { width: 40%; }
     .col-date   { width: 12%; }
     .col-score  { width: 8%;  text-align: center; }
@@ -182,6 +221,9 @@
     </div>
 
     {% if group.articles %}
+    {# ── Today's articles ── #}
+    {% if group.today %}
+    <div class="day-label">Today ({{ group.today | length }} article{{ "s" if group.today | length != 1 }})</div>
     <table>
       <thead>
         <tr>
@@ -193,7 +235,7 @@
         </tr>
       </thead>
       <tbody>
-        {% for article in group.articles %}
+        {% for article in group.today %}
         {% if article.relevance_score is none %}
           {% set row_class = "pending" %}
         {% elif article.relevance_score >= threshold %}
@@ -226,6 +268,63 @@
       </tbody>
     </table>
     {% else %}
+    <p class="empty">No articles today.</p>
+    {% endif %}
+
+    {# ── Previous days (collapsed by default) ── #}
+    {% if group.older %}
+    <button class="toggle-older" onclick="toggleOlder(this)">
+      <span class="arrow">&#9660;</span>
+      Previous days ({{ group.older | length }} article{{ "s" if group.older | length != 1 }})
+    </button>
+    <div class="older-section">
+      <table>
+        <thead>
+          <tr>
+            <th class="col-title sortable" data-col="0">Title</th>
+            <th class="col-date sortable" data-col="1">Scraped at</th>
+            <th class="col-score sortable" data-col="2">Score</th>
+            <th class="col-status sortable" data-col="3">Status</th>
+            <th class="col-reason">Reason</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for article in group.older %}
+          {% if article.relevance_score is none %}
+            {% set row_class = "pending" %}
+          {% elif article.relevance_score >= threshold %}
+            {% set row_class = "accepted" %}
+          {% else %}
+            {% set row_class = "rejected" %}
+          {% endif %}
+          <tr class="{{ row_class }}">
+            <td class="title-cell">
+              <a href="{{ article.url }}" target="_blank" rel="noopener">{{ article.title }}</a>
+            </td>
+            <td class="date">
+              {{ article.scraped_at.strftime("%Y-%m-%d %H:%M") if article.scraped_at else "—" }}
+            </td>
+            <td class="score">
+              {{ article.relevance_score if article.relevance_score is not none else "—" }}
+            </td>
+            <td>
+              {% if article.relevance_score is none %}
+                <span class="badge pending">Pending</span>
+              {% elif article.relevance_score >= threshold %}
+                <span class="badge accept">Accepted</span>
+              {% else %}
+                <span class="badge reject">Rejected</span>
+              {% endif %}
+            </td>
+            <td class="reason">{{ article.reason or "—" }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% endif %}
+
+    {% else %}
     <p class="empty">No articles in the last 3 days.</p>
     {% endif %}
   </section>
@@ -233,6 +332,13 @@
 </main>
 
 <script>
+  // Toggle visibility of the "previous days" section
+  function toggleOlder(btn) {
+    const section = btn.nextElementSibling;
+    const isVisible = section.classList.toggle("visible");
+    btn.classList.toggle("expanded", isVisible);
+  }
+
   // Sort order map: "colIndex-tableIndex" -> "asc" | "desc" | undefined
   const sortState = {};
 
