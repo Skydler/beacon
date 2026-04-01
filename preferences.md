@@ -2,146 +2,140 @@
 
 This file defines what types of news articles are relevant to me. The LLM uses this as context to filter articles.
 
+## Geographic Focus
+
+- **Primary**: Quilmes (including Quilmes Este, Ezpeleta, Berazategui, and surrounding areas)
+- **Secondary**: Argentina-wide news, but ONLY when it has direct impact on my daily life in Quilmes
+
+### What "national impact" means:
+- Economic policy changes (inflation, currency, wages, subsidies, taxes)
+- National health alerts or disease outbreaks
+- Laws or regulations that affect residents directly
+- Severe weather systems that will reach the Buenos Aires / Quilmes area
+- National infrastructure or utility decisions that affect my region
+
+### What national news to IGNORE:
+- Events happening in other provinces with no local effect
+- Local news from other cities (e.g., a new building in Cordoba, flooding in Tucuman)
+- National political drama without concrete policy impact
+- National sports, entertainment, or cultural events
+
 ## High Priority Topics
 
-These topics are extremely relevant - I want to be notified about any articles covering these areas:
+### Quilmes Local News
+- **Climate & Weather**: Weather events affecting Quilmes, storms, heat waves, flooding, alerts
+- **New Buildings & Urban Development**: Construction projects, new buildings, commercial developments, rezoning
+- **Road Work & Infrastructure**: Street repairs, paving, new roads, bridge work, utility infrastructure, traffic signals, drainage
+- **Local Economy**: Store openings/closings, local business news, commercial activity in the area
+- **Public Services**: Changes in local services, transportation, utilities
+
+### Economy (Local + National Impact)
+- **Cost of Living**: Price increases/decreases (food, gas, utilities, rent)
+- **Wages & Employment**: Minimum wage changes, job market, unemployment, layoffs
+- **Economic Policy**: Inflation measures, currency changes, subsidies, tax changes that affect households
+- **Utility Rates**: Electricity, gas, water rate changes
+- **Banking & Consumer Finance**: Account fees, credit access, payment systems changes
+
+### Health
+- **Disease Outbreaks**: COVID, dengue, flu outbreaks (local or national)
+- **Public Health Alerts**: Vaccination campaigns, health warnings, contamination alerts
+- **Healthcare Access**: Hospital capacity, healthcare system changes affecting Quilmes residents
 
 ### Technology & Digital
-- **Local Technology Events**: Conferences, meetups, hackathons, tech community events
 - **Cybersecurity**: Data breaches, security advisories, malware, hacking incidents
-- **Local Tech Development**: New apps, services, digital infrastructure, smart city initiatives
-- **Internet & Connectivity**: Broadband, 5G, network outages, ISP news
-- **Open Source**: Local developers releasing FOSS, open source community news
+- **Local Tech Events**: Conferences, meetups, hackathons in the area
+- **Internet & Connectivity**: Broadband, network outages, ISP news affecting my area
+- **Open Source**: Notable FOSS releases, open source community news
 
-### Health & Medical
-- **Disease Outbreaks**: COVID-19 cases rising, dengue fever, flu outbreaks, epidemics
-- **Public Health Alerts**: Vaccination campaigns, health warnings, contamination alerts
-- **Healthcare System**: Hospital capacity, healthcare access, medical supply issues
-- **Preventive Health**: Health screenings, disease prevention programs
-
-### Microeconomy (Everyday Economics)
-- **Cost of Living**: Price increases/decreases (food, gas, utilities, rent)
-- **Wages & Employment**: Minimum wage changes, job market, unemployment, hiring freezes
-- **Consumer Impact**: Inflation affecting households, subsidy programs, financial assistance
-- **Local Business**: Store closures/openings that affect daily life, service disruptions
-- **Banking & Finance for Regular People**: Account fees, credit access, payment systems
-
-### Extreme Weather
-- **Severe Weather Events**: Major storms, flooding, extreme heat waves, cold snaps
-- **Weather Emergencies**: Emergency declarations, evacuation orders, weather warnings
-
-### Food & Culinary
-- **Restaurant Openings**: New restaurants, bars, cafes, food venues opening in the area
-- **Food Events**: Food festivals, culinary fairs, gastronomic events, food markets
-- **Local Food Scene**: Notable chefs, new culinary concepts, food trends
+### Food & Dining (Quilmes Area)
+- **Restaurant Openings**: New restaurants, bars, cafes opening in Quilmes area
+- **Food Events**: Food festivals, culinary fairs, food markets in the area
 - **Food Safety**: Health inspections, food recalls, contamination alerts
 
 ## Medium Priority Topics
 
-I'm interested in these topics if they have significant local impact:
-
-### Technology (Medium Impact)
-- **Education Technology**: School programs, coding bootcamps, online learning platforms
-- **Tech Business**: Local startups, tech company expansions/closures, funding rounds
-- **Government Digital Services**: Online services, digital ID, e-government initiatives
-
-### Health (Medium Impact)
-- **Healthcare Technology**: Telemedicine, health apps, medical devices
-- **Medical Research**: Local clinical trials, research findings with practical impact
-- **Mental Health**: Mental health services, support programs
-
-### Economy (Medium Impact)
-- **Public Services**: Transportation fare changes, utility rate changes
-- **Benefits & Assistance**: Social programs, subsidies, government assistance
-- **Consumer Rights**: Regulatory changes affecting consumers, recalls
-
-### Food & Dining (Medium Impact)
-- **Food Prices**: Changes in food costs, grocery prices, restaurant price trends
-- **Specialty Food Stores**: New specialty shops, delis, food markets opening
-- **Cooking Classes & Workshops**: Culinary education, food-related workshops
-
-### Infrastructure & Urban Development (Medium Impact)
-- **Road Improvements**: Major road repairs, paving projects, new roads
-- **Public Infrastructure**: Bridges, tunnels, public works affecting daily commutes
-- **Urban Development**: Streetlights, sidewalks, drainage systems, traffic signals
-- **Utility Infrastructure**: Water, sewage, electrical grid improvements
+- **Education Technology**: Coding bootcamps, online learning, school tech programs
+- **Healthcare Technology**: Telemedicine, health apps
+- **Government Digital Services**: Online services, e-government initiatives
+- **Consumer Rights**: Regulatory changes, recalls
+- **Mental Health**: Services and support programs available locally
 
 ## Low Priority Topics
 
-Only notify me if these are major stories with broad impact:
+Only notify me if these are major stories:
 
-- **Regular Weather**: Normal forecasts, seasonal weather (unless extreme)
-- **Transportation**: Public transit updates, traffic systems (unless major disruption)
-- **Education**: School system news (unless directly affecting families)
-- **Environment**: Environmental initiatives (unless immediate health impact)
+- **Regular Weather**: Normal forecasts (unless extreme or emergency)
+- **Transportation**: Public transit updates (unless major disruption)
+- **Environment**: Environmental initiatives (unless immediate health/safety impact)
 
 ## Topics to Ignore
 
-Do NOT notify me about articles primarily focused on:
+Do NOT notify me about:
 
-- **Sports** (unless technology-related, e.g., esports)
+- **Sports** (unless esports/technology-related)
 - **Celebrity gossip, entertainment, game shows**
 - **Political campaigns and partisan politics** (unless direct policy impact on daily life)
 - **Crime reports** (unless cybercrime, major security breach, or public safety alert)
 - **Obituaries and funerals**
 - **Human interest stories** without practical relevance
 - **Traffic accidents** (unless major highway closure)
-- **Stock market news** (I care about microeconomy, not Wall Street)
-- **Crypto prices and trading** (not interested in speculation)
+- **Stock market / Wall Street** (I care about microeconomy, not markets)
+- **Crypto prices and trading**
 - **Arts and culture events** (galleries, museums, concerts)
-- **Real estate market trends** (unless affecting rental prices significantly)
+- **Real estate market trends** (unless affecting Quilmes rental prices significantly)
+- **News from other provinces/cities** with no impact on Quilmes or national policy
 
 ## Specific Keywords
 
 ### High relevance keywords (boost score):
+
+**Local/Quilmes:**
+- Quilmes, Quilmes Este, Berazategui, Ezpeleta
+- Obras, pavimentacion, construccion, edificio nuevo
+- Corte de calle, desvio, obra vial
+
+**Economy:**
+- Price increase, inflation, cost of living, inflacion, aumento
+- Minimum wage, salary, employment, salario, empleo
+- Subsidy, financial aid, subsidio, bono
+- Utility rates, gas prices, rent increase, tarifas, alquiler
+- Layoffs, hiring, job market, despidos
+- Dolar, tipo de cambio, devaluacion
 
 **Technology:**
 - Python, JavaScript, programming, software development
 - AI/ML, artificial intelligence, machine learning
 - Cybersecurity, InfoSec, hacking, malware, ransomware
 - Linux, open source, FOSS
-- Cloud computing, DevOps, automation
 - Privacy, encryption, data protection
 - Internet outage, network issues
 
 **Health:**
 - COVID, coronavirus, dengue, flu outbreak
 - Vaccination, vaccine, immunization
-- Disease outbreak, epidemic, contagion
+- Disease outbreak, epidemic
 - Hospital emergency, health alert
 - Contamination, food safety
-
-**Economy:**
-- Price increase, inflation, cost of living
-- Minimum wage, salary, employment
-- Subsidy, financial aid, assistance program
-- Utility rates, gas prices, rent increase
-- Layoffs, hiring, job market
 
 **Weather:**
 - Storm warning, heat wave, extreme weather
 - Flooding, evacuation, weather emergency
-- Temperature record, severe weather
+- Alerta meteorologica, tormenta, inundacion
 
 **Food & Dining:**
-- Restaurant opening, new restaurant, inauguration
-- Food festival, culinary fair, gastronomic event
-- Chef, cuisine, culinary, gastronomy
-- Food market, farmers market, food hall
-- Pizzeria, bakery, cafe, bistro, brewery
-- Food safety, health inspection, food recall
+- Restaurant opening, new restaurant, inauguracion
+- Food festival, culinary fair, feria gastronomica
+- Food market, farmers market
 
 **Infrastructure:**
 - Road paving, street repair, road improvement
 - Bridge construction, infrastructure project
-- Streetlight installation, sidewalk repair
-- Drainage system, sewage, water infrastructure
-- Traffic signal, traffic improvement
+- Streetlight, sidewalk repair, drainage
+- Asfalto, vereda, alumbrado, desague
 
 ### Negative keywords (reduce score):
 - Casino, gambling, lottery
 - Horoscope, astrology
-- Recipe, cooking (unless food safety)
 - Wedding, engagement
 - Fashion, makeup
 - Awards ceremony (unless tech/science)
@@ -149,122 +143,33 @@ Do NOT notify me about articles primarily focused on:
 - Stock market, trading, investment tips
 - Cryptocurrency speculation
 
-## Article Characteristics
-
-### Prefer articles that are:
-- **Actionable**: Information I can use (health warnings, price changes, service updates)
-- **Local**: Focus on my city/region/country
-- **Timely**: Recent developments, not old news
-- **Factual**: News reporting, not opinion pieces
-- **Impact-focused**: How does this affect regular people's daily lives?
-
-### Avoid articles that are:
-- **Clickbait**: Sensational headlines without substance
-- **Speculative**: Rumors, unconfirmed information
-- **Press releases**: Pure advertising
-- **Macro-focused**: National politics, stock market, big business (unless it affects local economy)
-
 ## Scoring Guidance for LLM
 
 Use this scale when rating articles:
 
-- **10**: Urgent/critical (disease outbreak, severe weather warning, major security breach)
-- **8-9**: High-priority topic with direct local impact (price increases, tech events, health alerts, restaurant openings, food festivals)
-- **6-7**: Medium-priority topic with clear relevance (tech business, healthcare access, service changes, specialty food stores, infrastructure improvements)
-- **4-5**: Low-priority topic or weak local connection (minor weather updates)
+- **10**: Urgent/critical for Quilmes residents (disease outbreak, severe weather warning, major security breach, major national economic shock)
+- **8-9**: High-priority topic with direct local impact (price increases, Quilmes construction/roadwork, tech events, health alerts, restaurant openings nearby, major national economic policy change)
+- **6-7**: Medium-priority topic with clear relevance (tech business, healthcare access, service changes, infrastructure improvements, national news with indirect local impact)
+- **4-5**: Low-priority topic or weak local connection
 - **2-3**: Marginally relevant or contains negative keywords
 - **1**: Should be ignored based on ignore list
 
-### Geographic Priority Boost
+### Geographic Scoring Rules
 
-Articles about these specific areas should receive a +1 to +2 score boost (don't go above 10):
-
-- **Quilmes Este**
-- **Berazategui**
-- **Ezpeleta**
-
-This boost applies to articles that are already relevant (score 4+). Don't boost ignored topics just because they mention these areas.
-
-## Examples
-
-### ✅ RELEVANT Articles (Score 8-10):
-
-**Technology:**
-- "Local Hackathon Announced for March 15th" → **10** (Tech event)
-- "Data Breach Exposes 5,000 Local Users' Information" → **10** (Cybersecurity)
-- "City Launches New Digital Services App" → **9** (Tech development)
-- "Internet Outage Affects Downtown Area" → **8** (Connectivity issue)
-
-**Health:**
-- "Dengue Cases Triple in Past Two Weeks" → **10** (Disease outbreak)
-- "Health Ministry Issues COVID Alert for Region" → **10** (Health alert)
-- "Free Vaccination Campaign Starts Monday" → **9** (Preventive health)
-- "Hospital Emergency Room at Capacity" → **8** (Healthcare system)
-
-**Microeconomy:**
-- "Bread Prices Increase 15% Starting Next Month" → **9** (Cost of living)
-- "Minimum Wage Raised to $X Effective March" → **9** (Wages)
-- "Electricity Rates to Increase 20%" → **9** (Utility costs)
-- "Major Supermarket Chain Closes 3 Local Stores" → **8** (Consumer impact)
-- "Government Announces New Subsidy Program for Families" → **8** (Financial assistance)
-
-**Weather:**
-- "Heat Wave Warning: Temperatures Expected to Reach 40°C" → **10** (Extreme weather)
-- "Storm Alert: Heavy Rainfall and Flooding Expected" → **10** (Weather emergency)
-
-**Food & Dining:**
-- "New Neapolitan Pizzeria Opens in City Center" → **9** (Restaurant opening)
-- "Annual Food Festival Returns This Weekend" → **9** (Food event)
-- "Health Department Closes Restaurant After Inspection" → **8** (Food safety)
-- "Local Chef Wins National Culinary Award" → **7** (Local food scene)
-
-### ⚠️ BORDERLINE Articles (Score 4-6):
-
-- "New Coworking Space Opens Downtown" → **5** (Tech-adjacent, minor impact)
-- "School District Tests New Learning App" → **5** (Education tech)
-- "Weekend Weather: Sunny with Mild Temperatures" → **3** (Regular weather forecast)
-
-**Infrastructure:**
-- "Major Road Repaving Project Begins on Main Avenue" → **7** (Infrastructure improvement)
-- "New Traffic Lights Installed in Quilmes Este" → **7** (Infrastructure + geographic boost)
-- "City Repairs Drainage System After Recent Floods" → **6** (Infrastructure with practical impact)
-- "Bridge Construction to Improve Berazategui Access" → **7** (Infrastructure + geographic boost)
-
-### ❌ NOT RELEVANT Articles (Score 1-3):
-
-**Human Interest (No practical relevance):**
-- "Local Resident Wins Game Show Prize" → **1** (Entertainment, not relevant)
-- "Celebrity Visits City for Film Premiere" → **1** (Entertainment)
-- "Local Artist Opens New Gallery Exhibition" → **1** (Arts, not relevant)
-
-**Wrong Economic Focus:**
-- "Stock Market Reaches New High" → **1** (Macro-economy, not microeconomy)
-- "Bitcoin Price Surges" → **1** (Crypto speculation)
-- "Company Reports Record Profits" → **1** (Business news without consumer impact)
-
-**Explicitly Ignored:**
-- "Local Team Wins Soccer Championship" → **1** (Sports)
-- "Traffic Accident Closes Highway Lane" → **1** (Traffic accident)
-- "Mayor Announces Park Renovation" → **1** (Not relevant unless health/weather related)
-- "Celebrity Spotted at Local Bar" → **1** (Entertainment/gossip)
+- **Quilmes / Quilmes Este / Berazategui / Ezpeleta**: +1 to +2 boost on already-relevant articles (don't exceed 10)
+- **Other Buenos Aires suburbs**: No boost, score on merit
+- **Other provinces**: Score 1-2 UNLESS it's a national-level story that affects Quilmes residents (economic policy, national health alert, etc.)
 
 ## Critical Filtering Instructions
 
 **When analyzing articles:**
 
-1. **First check the ignore list** - If it matches, score 1-2 immediately
-2. **Identify the specific topic** - Don't make loose connections
-3. **Verify direct relevance** - "Local person wins something" is NOT a tech event
-4. **Consider practical impact** - How does this affect regular people's daily lives?
+1. **First check geography** - Is this about Quilmes or national-impact news? If it's local news from another city/province, score 1-2
+2. **Check the ignore list** - If it matches, score 1-2 immediately
+3. **Identify the specific topic** - Don't make loose connections
+4. **Consider practical impact** - How does this affect me in Quilmes?
 5. **Be strict** - When in doubt, score LOW (false negatives better than false positives)
 
-**Technology MUST be actual technology** - Not just "a local achievement" or "someone doing something"
-**Microeconomy MUST affect household budgets** - Not stock markets or big business profits
-**Health MUST be actionable** - Outbreaks, alerts, access issues (not general medical science)
-**Weather MUST be extreme or emergency** - Not routine forecasts
-**Food & Dining MUST be about venues, events, or safety** - Restaurant openings, food festivals, inspections (not recipes or celebrity chefs without local relevance)
-**Infrastructure MUST have practical impact** - Major projects, road improvements, utility work affecting residents (not minor beautification or park renovations)
-
-**Geographic relevance**: Articles from Quilmes Este, Berazategui, or Ezpeleta get a small score boost (+1 to +2), but only if they're already relevant topics. Don't send irrelevant stories just because they mention these areas.
+**National news filter**: Only include national news if it will change something in my daily life (prices, services, health, regulations). Political maneuvering, other cities' local problems, or abstract macro trends without household impact should be scored low.
 
 **Remember: Prefer to MISS an article rather than send an irrelevant one.**
