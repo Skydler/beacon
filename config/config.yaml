@@ -27,7 +27,7 @@ github_models:
   # GitHub Models API - uses GitHub Personal Access Token
   # Create token at: https://github.com/settings/personal-access-tokens/new?name=GitHub+Models+token&user_models=read
   api_token: "${GITHUB_MODELS_TOKEN}"
-  model: "gpt-4o-mini"
+  model: "gpt-4.1"
   timeout: 60
   batch_size: 5 # Number of articles to analyze per LLM call (1-10, recommended: 5)
 

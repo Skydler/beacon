@@ -1,175 +1,188 @@
-# My News Preferences
+# Mis Preferencias de Noticias
 
-This file defines what types of news articles are relevant to me. The LLM uses this as context to filter articles.
+Este archivo define que tipos de noticias son relevantes para mi. El LLM usa este contexto para filtrar articulos.
 
-## Geographic Focus
+## Enfoque Geografico
 
-- **Primary**: Quilmes (including Quilmes Este, Ezpeleta, Berazategui, and surrounding areas)
-- **Secondary**: Argentina-wide news, but ONLY when it has direct impact on my daily life in Quilmes
+- **Principal**: Quilmes (incluyendo Quilmes Este, Ezpeleta, Berazategui y zonas cercanas)
+- **Secundario**: Noticias de Argentina a nivel nacional, pero SOLO cuando tengan impacto directo en mi vida diaria en Quilmes
 
-### What "national impact" means:
-- Economic policy changes (inflation, currency, wages, subsidies, taxes)
-- National health alerts or disease outbreaks
-- Laws or regulations that affect residents directly
-- Severe weather systems that will reach the Buenos Aires / Quilmes area
-- National infrastructure or utility decisions that affect my region
+### Que significa "impacto nacional":
 
-### What national news to IGNORE:
-- Events happening in other provinces with no local effect
-- Local news from other cities (e.g., a new building in Cordoba, flooding in Tucuman)
-- National political drama without concrete policy impact
-- National sports, entertainment, or cultural events
+- Cambios de politica economica (inflacion, moneda, salarios, subsidios, impuestos)
+- Alertas sanitarias nacionales o brotes de enfermedades
+- Leyes o regulaciones que afecten directamente a residentes
+- Sistemas de clima severo que llegaran al area de Buenos Aires / Quilmes
+- Decisiones nacionales de infraestructura o servicios publicos que afecten mi region
 
-## High Priority Topics
+### Noticias nacionales a IGNORAR:
 
-### Quilmes Local News
-- **Climate & Weather**: Weather events affecting Quilmes, storms, heat waves, flooding, alerts
-- **New Buildings & Urban Development**: Construction projects, new buildings, commercial developments, rezoning
-- **Road Work & Infrastructure**: Street repairs, paving, new roads, bridge work, utility infrastructure, traffic signals, drainage
-- **Local Economy**: Store openings/closings, local business news, commercial activity in the area
-- **Public Services**: Changes in local services, transportation, utilities
+- Hechos que ocurren en otras provincias sin efecto local
+- Noticias locales de otras ciudades (por ejemplo, un edificio nuevo en Cordoba, inundaciones en Tucuman)
+- Drama politico nacional sin impacto concreto en politicas publicas
+- Deportes, entretenimiento o eventos culturales nacionales
 
-### Economy (Local + National Impact)
-- **Cost of Living**: Price increases/decreases (food, gas, utilities, rent)
-- **Wages & Employment**: Minimum wage changes, job market, unemployment, layoffs
-- **Economic Policy**: Inflation measures, currency changes, subsidies, tax changes that affect households
-- **Utility Rates**: Electricity, gas, water rate changes
-- **Banking & Consumer Finance**: Account fees, credit access, payment systems changes
+## Temas de Alta Prioridad
 
-### Health
-- **Disease Outbreaks**: COVID, dengue, flu outbreaks (local or national)
-- **Public Health Alerts**: Vaccination campaigns, health warnings, contamination alerts
-- **Healthcare Access**: Hospital capacity, healthcare system changes affecting Quilmes residents
+### Noticias Locales de Quilmes
 
-### Technology & Digital
-- **Cybersecurity**: Data breaches, security advisories, malware, hacking incidents
-- **Local Tech Events**: Conferences, meetups, hackathons in the area
-- **Internet & Connectivity**: Broadband, network outages, ISP news affecting my area
-- **Open Source**: Notable FOSS releases, open source community news
+- **Clima**: Eventos climaticos que afecten Quilmes, tormentas, olas de calor, inundaciones, alertas
+- **Edificios Nuevos y Desarrollo Urbano**: Obras de construccion, edificios nuevos, desarrollos comerciales, rezonificacion
+- **Obras Viales e Infraestructura**: Reparacion de calles, pavimentacion, nuevas calles, puentes, infraestructura de servicios, semaforos, desagues
+- **Economia Local**: Aperturas/cierres de comercios, noticias de negocios locales, actividad comercial en la zona
+- **Servicios Publicos**: Cambios en servicios locales, transporte, servicios publicos
 
-### Food & Dining (Quilmes Area)
-- **Restaurant Openings**: New restaurants, bars, cafes opening in Quilmes area
-- **Food Events**: Food festivals, culinary fairs, food markets in the area
-- **Food Safety**: Health inspections, food recalls, contamination alerts
+### Economia (Impacto Local + Nacional)
 
-## Medium Priority Topics
+- **Costo de Vida**: Aumentos/bajas de precios (alimentos, nafta, servicios, alquiler)
+- **Salarios y Empleo**: Cambios en salario minimo, mercado laboral, desempleo, despidos
+- **Politica Economica**: Medidas de inflacion, cambios cambiarios, subsidios, impuestos que afecten a hogares
+- **Tarifas de Servicios**: Cambios en tarifas de luz, gas, agua
+- **Bancos y Finanzas del Consumidor**: Comisiones de cuentas, acceso a credito, cambios en medios de pago
 
-- **Education Technology**: Coding bootcamps, online learning, school tech programs
-- **Healthcare Technology**: Telemedicine, health apps
-- **Government Digital Services**: Online services, e-government initiatives
-- **Consumer Rights**: Regulatory changes, recalls
-- **Mental Health**: Services and support programs available locally
+### Salud
 
-## Low Priority Topics
+- **Brotes de Enfermedades**: COVID, dengue, gripe u otros brotes (locales o nacionales)
+- **Alertas de Salud Publica**: Campanas de vacunacion, advertencias sanitarias, alertas de contaminacion
+- **Acceso a Salud**: Capacidad hospitalaria, cambios del sistema de salud que afecten a residentes de Quilmes
 
-Only notify me if these are major stories:
+### Tecnologia y Digital
 
-- **Regular Weather**: Normal forecasts (unless extreme or emergency)
-- **Transportation**: Public transit updates (unless major disruption)
-- **Environment**: Environmental initiatives (unless immediate health/safety impact)
+- **Ciberseguridad**: Filtraciones de datos, brechas de seguridad, ciberataques o fraudes digitales que afecten a residentes, comercios, escuelas, bancos o servicios publicos locales/nacionales
+- **Internet y Conectividad**: Banda ancha, cortes de red, problemas de conectividad o noticias de ISP que afecten mi zona
 
-## Topics to Ignore
+### Comida y Gastronomia (Zona de Quilmes)
 
-Do NOT notify me about:
+- **Aperturas de Restaurantes**: Nuevos restaurantes, bares, cafes en la zona de Quilmes
+- **Eventos Gastronomicos**: Festivales de comida, ferias culinarias, mercados de comida en la zona
+- **Seguridad Alimentaria**: Inspecciones sanitarias, recalls de alimentos, alertas de contaminacion
 
-- **Sports** (unless esports/technology-related)
-- **Celebrity gossip, entertainment, game shows**
-- **Political campaigns and partisan politics** (unless direct policy impact on daily life)
-- **Crime reports** (unless cybercrime, major security breach, or public safety alert)
-- **Obituaries and funerals**
-- **Human interest stories** without practical relevance
-- **Traffic accidents** (unless major highway closure)
-- **Stock market / Wall Street** (I care about microeconomy, not markets)
-- **Crypto prices and trading**
-- **Arts and culture events** (galleries, museums, concerts)
-- **Real estate market trends** (unless affecting Quilmes rental prices significantly)
-- **News from other provinces/cities** with no impact on Quilmes or national policy
+## Temas de Prioridad Media
 
-## Specific Keywords
+- **Tecnologia en Salud**: Telemedicina, apps de salud
+- **Servicios Digitales del Gobierno**: Servicios online, iniciativas de gobierno digital
+- **Derechos del Consumidor**: Cambios regulatorios, recalls
+- **Salud Mental**: Servicios y programas de apoyo disponibles localmente
 
-### High relevance keywords (boost score):
+## Temas de Baja Prioridad
+
+Notificarme solo si son historias importantes:
+
+- **Clima Normal**: Pronosticos comunes (salvo que sean extremos o de emergencia)
+- **Transporte**: Actualizaciones de transporte publico (salvo interrupcion importante)
+- **Medio Ambiente**: Iniciativas ambientales (salvo impacto inmediato en salud/seguridad)
+
+## Temas a Ignorar
+
+NO notificarme sobre:
+
+- **Deportes** (salvo esports o relacionados con tecnologia)
+- **Chimentos de famosos, entretenimiento, programas de TV**
+- **Campanas politicas y politica partidaria** (salvo impacto directo de politicas publicas en la vida diaria)
+- **Reportes policiales o crimenes** (salvo cibercrimen, brecha de seguridad importante o alerta de seguridad publica)
+- **Accidentes locales** (choques, accidentes laborales, incendios o heridos) salvo que generen una alerta de seguridad publica en curso, interrupcion importante de servicios, evacuacion, corte de luz/agua/gas, o cierre importante de ruta/autopista
+- **Obituarios y funerales**
+- **Historias de interes humano** sin relevancia practica
+- **Accidentes de transito** (salvo cierre importante de autopista)
+- **Bolsa / Wall Street** (me importa la microeconomia, no los mercados)
+- **Precios y trading de cripto**
+- **Eventos artisticos y culturales** (galerias, museos, conciertos)
+- **Tendencias del mercado inmobiliario** (salvo que afecten significativamente los alquileres en Quilmes)
+- **Noticias de otras provincias/ciudades** sin impacto en Quilmes o en politicas nacionales
+
+## Palabras Clave Especificas
+
+### Palabras clave de alta relevancia (subir puntaje):
 
 **Local/Quilmes:**
+
 - Quilmes, Quilmes Este, Berazategui, Ezpeleta
 - Obras, pavimentacion, construccion, edificio nuevo
 - Corte de calle, desvio, obra vial
 
-**Economy:**
-- Price increase, inflation, cost of living, inflacion, aumento
-- Minimum wage, salary, employment, salario, empleo
-- Subsidy, financial aid, subsidio, bono
-- Utility rates, gas prices, rent increase, tarifas, alquiler
-- Layoffs, hiring, job market, despidos
+**Economia:**
+
+- Aumento de precios, inflacion, costo de vida, aumento
+- Salario minimo, sueldo, empleo, salario
+- Subsidio, ayuda economica, bono
+- Tarifas, precio del gas, aumento de alquiler, alquiler
+- Despidos, contrataciones, mercado laboral
 - Dolar, tipo de cambio, devaluacion
 
-**Technology:**
-- Python, JavaScript, programming, software development
-- AI/ML, artificial intelligence, machine learning
-- Cybersecurity, InfoSec, hacking, malware, ransomware
-- Linux, open source, FOSS
-- Privacy, encryption, data protection
-- Internet outage, network issues
+**Tecnologia:**
 
-**Health:**
-- COVID, coronavirus, dengue, flu outbreak
-- Vaccination, vaccine, immunization
-- Disease outbreak, epidemic
-- Hospital emergency, health alert
-- Contamination, food safety
+- Ciberseguridad, hackeo, malware, ransomware, filtracion de datos
+- Fraude digital, estafa virtual, robo de datos, brecha de seguridad
+- Corte de internet, problemas de red, conectividad, ISP
 
-**Weather:**
-- Storm warning, heat wave, extreme weather
-- Flooding, evacuation, weather emergency
+**Salud:**
+
+- COVID, coronavirus, dengue, brote de gripe
+- Vacunacion, vacuna, inmunizacion
+- Brote de enfermedad, epidemia
+- Emergencia hospitalaria, alerta sanitaria
+- Contaminacion, seguridad alimentaria
+
+**Clima:**
+
+- Alerta de tormenta, ola de calor, clima extremo
+- Inundacion, evacuacion, emergencia climatica
 - Alerta meteorologica, tormenta, inundacion
 
-**Food & Dining:**
-- Restaurant opening, new restaurant, inauguracion
-- Food festival, culinary fair, feria gastronomica
-- Food market, farmers market
+**Comida y Gastronomia:**
 
-**Infrastructure:**
-- Road paving, street repair, road improvement
-- Bridge construction, infrastructure project
-- Streetlight, sidewalk repair, drainage
+- Apertura de restaurante, nuevo restaurante, inauguracion
+- Festival gastronomico, feria culinaria, feria gastronomica
+- Mercado de comida, mercado de productores
+
+**Infraestructura:**
+
+- Pavimentacion, reparacion de calle, mejora vial
+- Construccion de puente, proyecto de infraestructura
+- Alumbrado, reparacion de veredas, desagues
 - Asfalto, vereda, alumbrado, desague
 
-### Negative keywords (reduce score):
-- Casino, gambling, lottery
-- Horoscope, astrology
-- Wedding, engagement
-- Fashion, makeup
-- Awards ceremony (unless tech/science)
-- Celebrity, influencer, reality TV
-- Stock market, trading, investment tips
-- Cryptocurrency speculation
+### Palabras clave negativas (bajar puntaje):
 
-## Scoring Guidance for LLM
+- Casino, apuestas, loteria
+- Horoscopo, astrologia
+- Casamiento, compromiso
+- Moda, maquillaje
+- Entrega de premios (salvo tecnologia/ciencia)
+- Famoso, influencer, reality TV
+- Bolsa, trading, consejos de inversion
+- Especulacion con criptomonedas
+- Choque, accidente, siniestro vial, incendio, heridos, fallecido, hospitalizado (salvo que este asociado a una alerta de seguridad publica en curso, evacuacion, corte de servicios o cierre importante)
 
-Use this scale when rating articles:
+## Guia de Puntaje para el LLM
 
-- **10**: Urgent/critical for Quilmes residents (disease outbreak, severe weather warning, major security breach, major national economic shock)
-- **8-9**: High-priority topic with direct local impact (price increases, Quilmes construction/roadwork, tech events, health alerts, restaurant openings nearby, major national economic policy change)
-- **6-7**: Medium-priority topic with clear relevance (tech business, healthcare access, service changes, infrastructure improvements, national news with indirect local impact)
-- **4-5**: Low-priority topic or weak local connection
-- **2-3**: Marginally relevant or contains negative keywords
-- **1**: Should be ignored based on ignore list
+Usar esta escala al calificar articulos:
 
-### Geographic Scoring Rules
+- **10**: Urgente/critico para residentes de Quilmes (brote de enfermedad, alerta meteorologica severa, brecha de seguridad importante, shock economico nacional importante)
+- **8-9**: Tema de alta prioridad con impacto local directo (aumentos de precios, construccion/obra vial en Quilmes, eventos tech, alertas sanitarias, aperturas de restaurantes cercanos, cambio importante de politica economica nacional)
+- **6-7**: Tema de prioridad media con relevancia clara (negocio tecnologico, acceso a salud, cambios de servicios, mejoras de infraestructura, noticias nacionales con impacto local indirecto)
+- **4-5**: Tema de baja prioridad o conexion local debil
+- **2-3**: Marginalmente relevante o contiene palabras clave negativas
+- **1**: Debe ignorarse segun la lista de temas a ignorar
 
-- **Quilmes / Quilmes Este / Berazategui / Ezpeleta**: +1 to +2 boost on already-relevant articles (don't exceed 10)
-- **Other Buenos Aires suburbs**: No boost, score on merit
-- **Other provinces**: Score 1-2 UNLESS it's a national-level story that affects Quilmes residents (economic policy, national health alert, etc.)
+### Reglas de Puntaje Geografico
 
-## Critical Filtering Instructions
+- **Quilmes / Quilmes Este / Berazategui / Ezpeleta**: +1 a +2 de impulso en articulos que ya son relevantes (no superar 10)
+- **Otros suburbios de Buenos Aires**: Sin impulso, puntuar segun merito
+- **Otras provincias**: Puntuar 1-2 SALVO que sea una noticia de nivel nacional que afecte a residentes de Quilmes (politica economica, alerta sanitaria nacional, etc.)
 
-**When analyzing articles:**
+## Instrucciones Criticas de Filtrado
 
-1. **First check geography** - Is this about Quilmes or national-impact news? If it's local news from another city/province, score 1-2
-2. **Check the ignore list** - If it matches, score 1-2 immediately
-3. **Identify the specific topic** - Don't make loose connections
-4. **Consider practical impact** - How does this affect me in Quilmes?
-5. **Be strict** - When in doubt, score LOW (false negatives better than false positives)
+**Al analizar articulos:**
 
-**National news filter**: Only include national news if it will change something in my daily life (prices, services, health, regulations). Political maneuvering, other cities' local problems, or abstract macro trends without household impact should be scored low.
+1. **Primero revisar geografia** - Es sobre Quilmes o una noticia de impacto nacional? Si es noticia local de otra ciudad/provincia, puntuar 1-2
+2. **Revisar la lista de ignorados** - Si coincide, puntuar 1-2 inmediatamente
+3. **Identificar el tema especifico** - No hacer conexiones vagas
+4. **Considerar el impacto practico** - Como me afecta en Quilmes?
+5. **Ser estricto** - Ante la duda, puntuar BAJO (prefiero falsos negativos antes que falsos positivos)
 
-**Remember: Prefer to MISS an article rather than send an irrelevant one.**
+**Filtro de noticias nacionales**: Incluir noticias nacionales solo si cambiaran algo en mi vida diaria (precios, servicios, salud, regulaciones). Maniobras politicas, problemas locales de otras ciudades o tendencias macro abstractas sin impacto en hogares deben recibir puntaje bajo.
+
+**Filtro de accidentes**: No notificarme sobre accidentes locales aislados, choques, incendios, heridos o muertes. Deben recibir puntaje 1-2 salvo que haya un impacto practico en curso para residentes, como evacuacion, corte de luz/agua/gas, cierre importante de ruta/autopista, advertencia de salud publica o patron repetido que cambie el riesgo local.
+
+**Recordatorio: Prefiero PERDERME un articulo antes que recibir uno irrelevante.**
